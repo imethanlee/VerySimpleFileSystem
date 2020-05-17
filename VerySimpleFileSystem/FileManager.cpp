@@ -11,7 +11,7 @@ FileManager::~FileManager()
 
 void FileManager::createFile(const char* file_name, const int file_size, const int multiplier)
 {
-	/* Ëæ»úÉú³É×Ö·û´® */
+	/* éšæœºç”Ÿæˆå­—ç¬¦ä¸² */
 	char* str = new char[file_size * multiplier];
 	for (int i = 0; i < file_size * multiplier - 1; ++i) {
 		switch (rand() % 3)
@@ -32,11 +32,12 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 	str[file_size * multiplier - 1] = '\0';
 	cout << str << endl;
 
-	/* »ñÈ¡ÎÄ¼ş´´½¨Ê±¼ä */
+	/* è·å–æ–‡ä»¶åˆ›å»ºæ—¶é—´ */
 	string curr_time_str = getCurrTime();
 	char* curr_time = new char[20];
 	strcpy(curr_time, curr_time_str.c_str());
 
-	/* Ğ´Èë */
+	/* å†™å…¥ */
 	// memcpy_s(a, sizeof(a), &b, 2);
+	cout << 3123 << endl;
 }
