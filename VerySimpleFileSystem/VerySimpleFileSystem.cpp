@@ -62,7 +62,7 @@ public:
 	}
 
 	int getFreeINode() {
-
+		return 0;
 	}
 
 public:
