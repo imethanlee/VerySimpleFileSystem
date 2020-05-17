@@ -61,8 +61,15 @@ public:
 		return (block_addr - data_start_addr) / BLOCK_SIZE;
 	}
 
-	int getFreeINode() {
-		return 0;
+	int getFreeINodeID() {
+		int free_node_id = -1;
+		for (int i = 0; i < NUM_INODES; ++i) {
+			if (inode_bitmap[i] == '0') {
+				free_node_id = i;
+				break;
+			}
+		}
+		return free_node_id;
 	}
 
 public:
