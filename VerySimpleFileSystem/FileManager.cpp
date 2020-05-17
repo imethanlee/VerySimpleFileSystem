@@ -35,9 +35,9 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 	/* 获取文件创建时间 */
 	string curr_time_str = getCurrTime();
 	char* curr_time = new char[20];
-	strcpy(curr_time, curr_time_str.c_str());
+	//strcpy(curr_time, curr_time_str.c_str());
 
 	/* 写入 */
 	// memcpy_s(a, sizeof(a), &b, 2);
-	cout << 3123 << endl;
+	cout << 456 << endl;
 }
