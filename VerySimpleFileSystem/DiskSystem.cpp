@@ -51,6 +51,10 @@ char* DiskSystem::getSystemStartAddr()
 	return system_start_addr;
 }
 
+void DiskSystem::getSuperBlock()
+{
+}
+
 char* DiskSystem::getDataBlockAddrByID(int block_id)
 {
 	return data_start_addr + (block_id * BLOCK_SIZE);
