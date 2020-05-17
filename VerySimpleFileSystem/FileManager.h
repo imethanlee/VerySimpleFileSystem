@@ -15,7 +15,6 @@ public:
 	void displayUsage(); // Display the usage of storage space
 	void printFileContents(int inode_id); // Print out the file contents
 
-
 private:
 	DiskSystem disk;
 	char* curr_ptr;
