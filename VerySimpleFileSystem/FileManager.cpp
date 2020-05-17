@@ -39,5 +39,5 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 
 	/* 写入 */
 	// memcpy_s(a, sizeof(a), &b, 2);
-	cout << 3123 << endl;
+	cout << 123 << endl;
 }

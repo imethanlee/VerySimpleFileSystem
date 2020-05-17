@@ -2,20 +2,20 @@
 
 DiskSystem::DiskSystem()
 {
-	/* 系统分配空间 */
+	/* 绯荤粺鍒嗛厤绌洪棿 */
 	system_start_addr = (char*)malloc(SYSTEM_SIZE * sizeof(char));
 
-	/* 设置super_block地址 */
+	/* 璁剧疆super_block鍦板潃 */
 	super_block = (SuperBlock*)system_start_addr;
 
-	/* 设置inode_bitmap地址 */
+	/* 璁剧疆inode_bitmap鍦板潃 */
 	inode_bitmap = system_start_addr + OFFSET_INODE_BITMAP * BLOCK_SIZE;
 	char* tmp_inode_bitmap = new char[NUM_INODES];
 	memcpy(inode_bitmap, tmp_inode_bitmap, NUM_INODES * sizeof(char));
 	memset(inode_bitmap, '0', NUM_INODES * sizeof(char));
 	delete[] tmp_inode_bitmap;
 
-	/* 设置data_bitmap地址 */
+	/* 璁剧疆data_bitmap鍦板潃 */
 	data_bitmap = system_start_addr + OFFSET_DATA_BITMAP * BLOCK_SIZE;
 	char* tmp_data_bitmap = new char[NUM_BLOCKS];
 	memcpy(data_bitmap, tmp_data_bitmap, NUM_BLOCKS * sizeof(char));
@@ -23,27 +23,27 @@ DiskSystem::DiskSystem()
 	delete[] tmp_data_bitmap;
 
 
-	/* 初始化i-node */
+	/* 鍒濆鍖杋-node */
 	inodes = (INode*)(system_start_addr + OFFSET_INODES * BLOCK_SIZE);
 	INode* tmp_inodes = new INode[NUM_INODES];
 	memcpy(inodes, tmp_inodes, NUM_INODES * sizeof(INode));
 	delete[] tmp_inodes;
 
-	/* 设置data_block起始地址 */
+	/* 璁剧疆data_block璧峰鍦板潃 */
 	data_start_addr = system_start_addr + OFFSET_DATA * BLOCK_SIZE;
 }
 
 DiskSystem::~DiskSystem()
 {
-	// 备份系统
+	// 澶囦唤绯荤粺(Data block)
 
-	// 释放空间
+	// 閲婃斁绌洪棿
 	free(system_start_addr);
 }
 
 void DiskSystem::systemReload()
 {
-	// 从备份文件中读取
+	// 浠庡浠芥枃浠朵腑璇诲彇
 }
 
 char* DiskSystem::getSystemStartAddr()
@@ -53,6 +53,7 @@ char* DiskSystem::getSystemStartAddr()
 
 void DiskSystem::getSuperBlock()
 {
+	
 }
 
 char* DiskSystem::getDataBlockAddrByID(int block_id)
