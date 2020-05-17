@@ -1,6 +1,5 @@
 #pragma once
 #include<iostream>
-#include<bitset>
 #include<random>
 #include<ctime>
 #include<string>
@@ -34,8 +33,7 @@ public:
 	int ninodes;
 };
 
-
-string getCurrTime() {
+static string getCurrTime() {
 	time_t time_seconds = time(0);
 	struct tm now_time;
 	localtime_s(&now_time, &time_seconds);

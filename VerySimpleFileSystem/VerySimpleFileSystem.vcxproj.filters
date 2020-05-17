@@ -18,9 +18,21 @@
     <ClCompile Include="VerySimpleFileSystem.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="DiskSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DiskSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FileManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

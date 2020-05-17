@@ -147,9 +147,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DiskSystem.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="VerySimpleFileSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DiskSystem.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
