@@ -11,7 +11,7 @@ public:
 	void deleteDirectory(const char* dir_name); // Delete a directory
 	void changeDirectory(const char* dir_name); // Change current directory
 	void listAll(); // List all the files and sub-directories under current working directory
-	void copyFile(); // Copy a file
+	void copyFile(const char* file_name_1, const char* file_name_2); // Copy a file
 	void displayUsage(); // Display the usage of storage space
 	void printFileContents(int inode_id); // Print out the file contents
 

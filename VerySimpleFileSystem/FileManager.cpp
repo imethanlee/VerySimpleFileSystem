@@ -37,7 +37,29 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 	char* curr_time = new char[20];
 	strcpy(curr_time, curr_time_str.c_str());
 
-	/* 写入 */
+	/* write file */
 	// memcpy_s(a, sizeof(a), &b, 2);
-	cout << 123 << endl;
+	//read data bitmap for free data block
+	//save in data block
+	//modify data bitmap
+
+	//read inode bitmap for free iniode block
+	//struct inode(pointers inode_block->data bolck)
+	//modify inode bitmap
+}
+
+void FileManager::deleteFile(const char* file_name)
+{
+	//bitmaps 1->0
+}
+
+void FileManager::copyFile(const char* file_name1,const char* file_name2 )
+{
+	/*
+	file1->file2:
+	1.create file2
+	2.read file1
+	3.write file2
+	*/
+
 }
