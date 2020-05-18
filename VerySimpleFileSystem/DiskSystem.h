@@ -3,16 +3,20 @@
 
 class DiskSystem {
 public:
-	DiskSystem();
-	~DiskSystem();
-	void systemReload();
-	char* getSystemStartAddr();
-	void getSuperBlock();
-	char* getDataBlockAddrByID(int block_id);
-	INode* getINodeAddrByID(int inode_id);
-	int getDataBlockIDByAddr(char* block_addr);
-	int getFreeINodeID();
-	int getFreeDataNodeID();
+	DiskSystem();		// 构造函数
+	~DiskSystem();		// 析构函数
+	void systemReload();	// 从磁盘中恢复数据
+	char* getSystemStartAddr(); // 获取系统起始地址
+	void getSuperBlock();		// 获取super block
+	char* getDataBlockAddrByID(int block_id);	// 根据ID获取Data Block地址
+	int getDataBlockIDByAddr(char* block_addr);	// 根据地址获取Data BlockID
+	INode* getINodeAddrByID(int inode_id);		// 根据ID获取I-Node地址
+	void setINodeBitmap(const int id, const int value); // 对I-Node Bitmap赋值
+	int getINodeBitmap(const int id);	// 获取I-Node BItmap的值
+	void setDataBlockBitmap(const int id, const int value); // 对Data Block Bitmap赋值
+	int getDataBlockBitmap(const int id);	// 获取Data Block Bitmap的值
+	int getFreeINodeID();	// 获取空闲I-Node ID
+	int getFreeDataNodeID(); // 获取空闲Data Block ID
 
 public:
 	char* system_start_addr;	// 整个系统起始地址

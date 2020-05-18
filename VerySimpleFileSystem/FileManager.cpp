@@ -12,7 +12,7 @@ FileManager::~FileManager()
 
 void FileManager::createFile(const char* file_name, const int file_size, const int multiplier)
 {
-	double file_size_byte = file_size * multiplier;
+	const int file_size_byte = file_size * multiplier;
 	/* 随机生成字符串 */
 	char* str = new char[file_size * multiplier];
 	for (int i = 0; i < file_size * multiplier - 1; ++i) {
@@ -36,20 +36,21 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 
 	/* 获取文件创建时间 */
 	string curr_time_str = getCurrTime();
-	char* curr_time = new char[20];
-	//strcpy(curr_time, curr_time_str.c_str());
+	char curr_time[20];
+	strcpy_s(curr_time, curr_time_str.c_str());
+	cout << curr_time << endl;
+	system("pause");
 
-	DiskSystem ds;
-	int totalBlockNum = int (file_size_byte / BLOCK_SIZE) + 1;
-	int lastBlockSpace = int(file_size_byte - (totalBlockNum - 1)) * BLOCK_SIZE;
+	int totalBlockNum = (int)ceil(file_size_byte / BLOCK_SIZE);
+	int lastBlockSpace = file_size_byte % BLOCK_SIZE;
 	cout << "totalBlockNum: "<<totalBlockNum << endl;
 	cout << "lastBlockSpace: " << lastBlockSpace << endl;
 	cout << "sizeof(str): " << sizeof(str) << endl;
 	for (int i = 0; i < totalBlockNum; i++)
 	{
 		//read data bitmap for free data block
-		int freeDBid = ds.getFreeDataNodeID();
-		char* ptr = ds.getDataBlockAddrByID(freeDBid);
+		int freeDBid = disk.getFreeDataNodeID();
+		char* ptr = disk.getDataBlockAddrByID(freeDBid);
 		//save in data block
 		if (i < totalBlockNum - 1) 
 		{
@@ -62,17 +63,15 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 			cout << i;
 		}
 		//modify data bitmap
-		ds.data_bitmap[freeDBid] = 1;
+		disk.data_bitmap[freeDBid] = 1;
 		//read inode bitmap for free iniode block
-		int freeINid = ds.getFreeINodeID();
-		INode* inptr = ds.getINodeAddrByID(freeINid);
+		int freeINid = disk.getFreeINodeID();
+		INode* inptr = disk.getINodeAddrByID(freeINid);
 		//struct inode(pointers inode_block->data bolck)
-		//inptr = ptr;
+		//inptr->direct[i] = disk.getDataBlockIDByAddr(ptr);
 		//modify inode bitmap
-		ds.data_bitmap[freeINid] = 1;
+		disk.data_bitmap[freeINid] = 1;
 	}
-	
-	
 }
 
 void FileManager::deleteFile(const char* file_name)

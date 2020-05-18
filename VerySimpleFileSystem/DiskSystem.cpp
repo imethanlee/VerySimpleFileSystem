@@ -32,10 +32,7 @@ DiskSystem::DiskSystem()
 	/* 设置data_block起始地址 */
 	data_start_addr = system_start_addr + OFFSET_DATA * BLOCK_SIZE;
 
-	/* 初始设置 */
-	for (int i = 0; i < OFFSET_DATA; ++i) {
-		data_bitmap[i] = '1';
-	}
+	/* 额外初始化 */
 }
 
 DiskSystem::~DiskSystem()
@@ -82,6 +79,46 @@ INode* DiskSystem::getINodeAddrByID(int inode_id)
 int DiskSystem::getDataBlockIDByAddr(char* block_addr)
 {
 	return (block_addr - data_start_addr) / BLOCK_SIZE;
+}
+
+void DiskSystem::setINodeBitmap(const int id, const int value)
+{
+	if (value == 0) {
+		inode_bitmap[id] = '0';
+	}
+	else if (value == 1) {
+		inode_bitmap[id] = '1';
+	}
+}
+
+int DiskSystem::getINodeBitmap(const int id)
+{
+	if (inode_bitmap[id] == '0') {
+		return 0;
+	}
+	else if (inode_bitmap[id] == '1') {
+		return 1;
+	}
+}
+
+void DiskSystem::setDataBlockBitmap(const int id, const int value)
+{
+	if (value == 0) {
+		data_bitmap[id] = '0';
+	}
+	else if (value == 1) {
+		data_bitmap[id] = '1';
+	}
+}
+
+int DiskSystem::getDataBlockBitmap(const int id)
+{
+	if (data_bitmap[id] == '0') {
+		return 0;
+	}
+	else if (data_bitmap[id] == '1') {
+		return 1;
+	}
 }
 
 int DiskSystem::getFreeINodeID()
