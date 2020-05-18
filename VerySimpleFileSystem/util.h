@@ -11,10 +11,12 @@ const int BLOCK_SIZE = 1 * 1024;				// Block空间大小
 const int NUM_BLOCKS = 16 * 1024;				// Block总个数
 const int NUM_INODES = 62;						// i-node总个数
 const int ADDR_PER_INODE = 10;					// i-node中direct的个数
+const int DIRECTORY_TABLE_SIZE = NUM_INODES;	// Direcotry table的大小
 
 const int OFFSET_INODE_BITMAP = 1;
 const int OFFSET_DATA_BITMAP = OFFSET_DATA_BITMAP + 1;
 const int OFFSET_INODES = OFFSET_DATA_BITMAP + 16;
+// const int OFFSET_DITRCORY_TABLE = OFFSET_INODES + 3;
 const int OFFSET_DATA = OFFSET_INODES + 6;
 
 const int NUM_DATA_BLOCKS = NUM_BLOCKS - OFFSET_DATA;
@@ -95,6 +97,12 @@ public:
 	int getSize() {
 		return size;
 	}
+	void setParentINodeID(const int inode_id) {
+		parent_inode_id = inode_id;
+	}
+	int getParentINodeID() {
+		return parent_inode_id;
+	}
 	void setDirect(const int i, const int block_id) {
 		char ch[3];
 		getCharFromInt(block_id, ch);
@@ -113,16 +121,22 @@ public:
 		int addr = getIntFromChar(this->addr + ADDR_PER_INODE * 3 * sizeof(char));
 		return addr;
 	}
+
 private:
 	char type;
 	char name[20];
 	char time_created[20];
 	int size;
+	int parent_inode_id;
 	char addr[(ADDR_PER_INODE + 1) * 3];
 };
 
-class Directory {
-
+class DirectoryTable {
+	int inode_id = -1;
+	char type;
+	char name[20];
+	int size;
+	int parent_inode_id;
 };
 
 class SuperBlock {

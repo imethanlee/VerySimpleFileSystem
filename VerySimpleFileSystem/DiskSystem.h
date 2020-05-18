@@ -17,6 +17,7 @@ public:
 	int getDataBlockBitmap(const int id);	// 获取Data Block Bitmap的值
 	int getFreeINodeID();	// 获取空闲I-Node ID
 	int getFreeDataNodeID(); // 获取空闲Data Block ID
+	void initINode(const int inode_id, string type, const char* name, const char* time_created, const int size, const int parent_inode_id);
 
 public:
 	char* system_start_addr;	// 整个系统起始地址

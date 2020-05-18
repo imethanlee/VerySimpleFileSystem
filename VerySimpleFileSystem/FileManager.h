@@ -7,8 +7,8 @@ public:
 	~FileManager();
 	void createFile(const char* file_name, const int file_size, const int multiplier); // Create a file
 	void deleteFile(const char* file_name); // Delete a file
-	void createDirectory(const char* dir_name); // Create a directory
-	void deleteDirectory(const char* dir_name); // Delete a directory
+	void createDirectory(const char* dir_name, const int parent_inode_id); // Create a directory
+	void deleteDirectory(const int dir_inode_id); // Delete a directory
 	void changeDirectory(const char* dir_name); // Change current directory
 	void listAll(); // List all the files and sub-directories under current working directory
 	void copyFile(const char* file_name_1, const char* file_name_2); // Copy a file

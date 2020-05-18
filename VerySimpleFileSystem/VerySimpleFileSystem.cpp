@@ -2,10 +2,7 @@
 
 int main() {
 	FileManager fm;
-	//fm.createFile("fileName", 1, 1024);
-	INode inode;
-	inode.setType("FILE");
-	cout << inode.getType() << endl;
+	fm.createFile("fileName", 1, 1024);
 
 	system("pause");
 }

@@ -15,7 +15,7 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 	const int file_size_byte = file_size * multiplier;
 	/* 随机生成字符串 */
 	char* str = new char[file_size * multiplier];
-	for (int i = 0; i < file_size * multiplier - 1; ++i) {
+	for (int i = 0; i < file_size * multiplier; ++i) {
 		switch (rand() % 3)
 		{
 		case 0:
@@ -77,6 +77,17 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 void FileManager::deleteFile(const char* file_name)
 {
 	//bitmaps 1->0
+}
+
+void FileManager::createDirectory(const char* dir_name, const int parent_inode_id)
+{
+	int dir_inode_id = disk.getFreeINodeID();
+	disk.initINode(dir_inode_id, "DIR", dir_name, getCurrTime().c_str(), -1, parent_inode_id);
+}
+
+void FileManager::deleteDirectory(const int dir_inode_id)
+{
+	// 递归删除（树状）
 }
 
 void FileManager::copyFile(const char* file_name1,const char* file_name2 )

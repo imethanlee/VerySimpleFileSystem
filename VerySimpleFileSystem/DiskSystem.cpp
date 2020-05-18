@@ -33,6 +33,12 @@ DiskSystem::DiskSystem()
 	data_start_addr = system_start_addr + OFFSET_DATA * BLOCK_SIZE;
 
 	/* 额外初始化 */
+	/* 初始化根目录/root/ */
+	int root_inode_id = getFreeINodeID();
+	cout << "root" << root_inode_id << endl;
+	setINodeBitmap(root_inode_id, 1);
+	initINode(root_inode_id, "DIR", "root", getCurrTime().c_str(), -1, -1);
+	
 }
 
 DiskSystem::~DiskSystem()
@@ -143,4 +149,13 @@ int DiskSystem::getFreeDataNodeID()
 		}
 	}
 	return free_data_block_id;
+}
+
+void DiskSystem::initINode(const int inode_id, string type, const char* name, const char* time_created, const int size, const int parent_inode_id)
+{
+	inodes[inode_id].setType("FILE");
+	inodes[inode_id].setName(name);
+	inodes[inode_id].setTimeCreated(time_created);
+	inodes[inode_id].setSize(size);
+	inodes[inode_id].setParentINodeID(parent_inode_id);
 }
