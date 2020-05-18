@@ -9,14 +9,16 @@ public:
 	char* getSystemStartAddr();
 	void getSuperBlock();
 	char* getDataBlockAddrByID(int block_id);
+	char* getINodeAddrByID(int inode_id);
 	int getDataBlockIDByAddr(char* block_addr);
 	int getFreeINodeID();
+	int getFreeDataNodeID();
 
 public:
-	char* system_start_addr;	// 整个系统起始地址
-	SuperBlock* super_block;	// super block地址
-	char* inode_bitmap;			// i-node bitmap地址
-	char* data_bitmap;			// data block bitmap地址
-	INode* inodes;				// i-node地址
-	char* data_start_addr;		// data block地址
+	char* system_start_addr;	// 鏁翠釜绯荤粺璧峰鍦板潃
+	SuperBlock* super_block;	// super block鍦板潃
+	char* inode_bitmap;			// i-node bitmap鍦板潃
+	char* data_bitmap;			// data block bitmap鍦板潃
+	INode* inodes;				// i-node鍦板潃
+	char* data_start_addr;		// data block鍦板潃
 };

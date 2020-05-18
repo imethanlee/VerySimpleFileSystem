@@ -3,13 +3,14 @@
 #include<random>
 #include<ctime>
 #include<string>
+
 using namespace std;
 
-#define SYSTEM_SIZE 16 * 1024 * 1024		// System×Ü´óĞ¡
-#define BLOCK_SIZE 1 * 1024					// Block¿Õ¼ä´óĞ¡
-#define NUM_BLOCKS 16 * 1024				// Block×Ü¸öÊı
-#define NUM_INODES	62						// i-node×Ü¸öÊı
-#define ADDR_PER_INODE 10					// i-nodeÖĞdirectµÄ¸öÊı
+#define SYSTEM_SIZE 16 * 1024 * 1024		// Systemæ€»å¤§å°
+#define BLOCK_SIZE 1 * 1024					// Blockç©ºé—´å¤§å°
+#define NUM_BLOCKS 16 * 1024				// Blockæ€»ä¸ªæ•°
+#define NUM_INODES	62						// i-nodeæ€»ä¸ªæ•°
+#define ADDR_PER_INODE 10					// i-nodeä¸­directçš„ä¸ªæ•°
 
 #define OFFSET_INODE_BITMAP 1
 #define OFFSET_DATA_BITMAP 2

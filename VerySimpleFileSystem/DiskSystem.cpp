@@ -56,9 +56,15 @@ void DiskSystem::getSuperBlock()
 	
 }
 
+
 char* DiskSystem::getDataBlockAddrByID(int block_id)
 {
 	return data_start_addr + (block_id * BLOCK_SIZE);
+}
+
+char* DiskSystem::getINodeAddrByID(int inode_id)
+{
+	return nullptr;
 }
 
 int DiskSystem::getDataBlockIDByAddr(char* block_addr)
@@ -76,4 +82,9 @@ int DiskSystem::getFreeINodeID()
 		}
 	}
 	return free_node_id;
+}
+
+int DiskSystem::getFreeDataNodeID()
+{
+	return 0;
 }
