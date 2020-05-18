@@ -65,9 +65,9 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 		ds.data_bitmap[freeDBid] = 1;
 		//read inode bitmap for free iniode block
 		int freeINid = ds.getFreeINodeID();
-		char* inptr = ds.getINodeAddrByID(freeINid);
+		INode* inptr = ds.getINodeAddrByID(freeINid);
 		//struct inode(pointers inode_block->data bolck)
-		inptr = ptr;
+		//inptr = ptr;
 		//modify inode bitmap
 		ds.data_bitmap[freeINid] = 1;
 	}
@@ -89,4 +89,9 @@ void FileManager::copyFile(const char* file_name1,const char* file_name2 )
 	3.write file2
 	*/
 
+}
+
+DiskSystem* FileManager::getDisk()
+{
+	return &disk;
 }

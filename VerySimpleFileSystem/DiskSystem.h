@@ -9,7 +9,7 @@ public:
 	char* getSystemStartAddr();
 	void getSuperBlock();
 	char* getDataBlockAddrByID(int block_id);
-	char* getINodeAddrByID(int inode_id);
+	INode* getINodeAddrByID(int inode_id);
 	int getDataBlockIDByAddr(char* block_addr);
 	int getFreeINodeID();
 	int getFreeDataNodeID();
