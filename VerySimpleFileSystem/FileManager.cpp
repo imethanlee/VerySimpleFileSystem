@@ -12,6 +12,9 @@ FileManager::~FileManager()
 
 void FileManager::createFile(const char* file_name, const int file_size, const int multiplier)
 {
+	//同目录下，查重名文件（待实现）
+
+
 	const int file_size_byte = file_size * multiplier;
 	/* 随机生成字符串 */
 	char* str = new char[file_size * multiplier];
@@ -117,6 +120,7 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 
 void FileManager::deleteFile(const char* file_name)
 {
+	//use filename to find file-id
 	//bitmaps 1->0
 }
 
@@ -187,6 +191,14 @@ void FileManager::copyFile(const char* file_name1,const char* file_name2 )
 	3.write file2
 	*/
 
+}
+
+void FileManager::displayUsage()
+{
+}
+
+void FileManager::printFileContents(int inode_id)
+{
 }
 
 DiskSystem* FileManager::getDisk()
