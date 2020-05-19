@@ -35,7 +35,7 @@ DiskSystem::DiskSystem()
 	/* 额外初始化 */
 	/* 初始化根目录/root/ */
 	int root_inode_id = getFreeINodeID();
-	cout << "root" << root_inode_id << endl;
+	// cout << "root" << root_inode_id << endl;
 	setINodeBitmap(root_inode_id, 1);
 	initINode(root_inode_id, "DIR", "root", getCurrTime().c_str(), -1, -1);
 	
@@ -139,10 +139,10 @@ int DiskSystem::getFreeINodeID()
 	return free_node_id;
 }
 
-int DiskSystem::getFreeDataNodeID()
+int DiskSystem::getFreeDataBlockID()
 {
 	int free_data_block_id = -1;
-	for (int i = 0; i < NUM_INODES; ++i) {
+	for (int i = 0; i < NUM_DATA_BLOCKS; ++i) {
 		if (data_bitmap[i] == '0') {
 			free_data_block_id = i;
 			break;

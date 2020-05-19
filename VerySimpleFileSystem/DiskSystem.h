@@ -16,7 +16,7 @@ public:
 	void setDataBlockBitmap(const int id, const int value); // 对Data Block Bitmap赋值
 	int getDataBlockBitmap(const int id);	// 获取Data Block Bitmap的值
 	int getFreeINodeID();	// 获取空闲I-Node ID
-	int getFreeDataNodeID(); // 获取空闲Data Block ID
+	int getFreeDataBlockID(); // 获取空闲Data Block ID
 	void initINode(const int inode_id, string type, const char* name, const char* time_created, const int size, const int parent_inode_id);
 
 public:
