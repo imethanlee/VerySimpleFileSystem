@@ -50,6 +50,8 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 	//read inode bitmap for free iniode block
 	int freeINid = disk.getFreeINodeID();
 	INode* inptr = disk.getINodeAddrByID(freeINid);
+	cout << "find inode: " << freeINid << endl;
+
 	//build indirect pointer in inode
 	int indirDBid = 0;
 	char* indirPtr = NULL;
@@ -65,12 +67,14 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 	}
 	
 	//modify inode bitmap
+	
 	disk.setINodeBitmap(freeINid,1);
 	cout << "modify inode bitmap" << endl;
 	cout << '\n' << endl;
 
 	for (int i = 0; i < totalBlockNum; i++)
 	{
+		
 		//read data bitmap for free data block
 		int freeDBid = disk.getFreeDataBlockID();
 		char* ptr = disk.getDataBlockAddrByID(freeDBid);
@@ -105,8 +109,10 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 			memcpy(phyAddr + (i-10) * 3 * sizeof(char), db_ch, 3 * sizeof(char));
 			cout << i << " save into indirect" << endl;
 		}
+		
 		cout << '\n' << endl;
 	}
+	
 }
 
 void FileManager::deleteFile(const char* file_name)
