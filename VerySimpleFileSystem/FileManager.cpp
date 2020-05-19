@@ -172,9 +172,9 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 				}
 			}
 
-			// 目录下的文件or子目录入栈
+			// 目录下的文件/子目录入栈
 			for (int i = 0; i < NUM_INODES; ++i) {
-				if (disk.getINodeBitmap(curr) == 1 && disk.inodes[curr].getParentINodeID() == curr) {
+				if (disk.getINodeBitmap(i) == 1 && disk.inodes[i].getParentINodeID() == curr) {
 					s.push(i);
 				}
 			}
