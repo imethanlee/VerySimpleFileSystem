@@ -2,6 +2,11 @@
 
 int main() {
 	FileManager fm;
+	cout << fm.getDisk()->inodes[0].getName() << endl;
+	cout << fm.getDisk()->inodes[0].getType() << endl;
+	cout << fm.getDisk()->inodes[0].getSize() << endl;
+	cout << fm.getDisk()->inodes[0].getimeCreated() << endl;
+	/*
 	fm.createFile("fileName", 11, 1024);
 	cout << "data bitmap: " << endl;
 	int count = 0;
@@ -19,5 +24,6 @@ int main() {
 	{
 		cout << fm.getDisk()->inode_bitmap[i];
 	}
+	*/
 	system("pause");
 }

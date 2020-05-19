@@ -153,7 +153,7 @@ int DiskSystem::getFreeDataBlockID()
 
 void DiskSystem::initINode(const int inode_id, string type, const char* name, const char* time_created, const int size, const int parent_inode_id)
 {
-	inodes[inode_id].setType("FILE");
+	inodes[inode_id].setType(type);
 	inodes[inode_id].setName(name);
 	inodes[inode_id].setTimeCreated(time_created);
 	inodes[inode_id].setSize(size);
