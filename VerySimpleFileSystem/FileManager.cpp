@@ -120,7 +120,7 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 
 void FileManager::deleteFile(const char* file_name)
 {
-	//use filename to find file-id
+	//use filename to find file-id	
 	//bitmaps 1->0
 }
 
