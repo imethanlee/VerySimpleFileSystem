@@ -4,6 +4,7 @@
 #include<ctime>
 #include<string>
 #include<stack>
+#include<vector>
 
 using namespace std;
 
@@ -132,13 +133,6 @@ private:
 	char addr[(ADDR_PER_INODE + 1) * 3];
 };
 
-class DirectoryTable {
-	int inode_id = -1;
-	char type;
-	char name[20];
-	int size;
-	int parent_inode_id;
-};
 
 class SuperBlock {
 public:

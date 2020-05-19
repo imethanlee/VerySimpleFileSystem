@@ -3,7 +3,7 @@
 
 FileManager::FileManager()
 {
-	curr_ptr = disk.getSystemStartAddr();
+	curr_dir_inode = 0;
 }
 
 FileManager::~FileManager()
@@ -118,7 +118,7 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 	
 }
 
-void FileManager::deleteFile(const char* file_name)
+void FileManager::deleteFile(const int file_inode_id)
 {
 	//use filename to find file-id
 	//bitmaps 1->0
@@ -148,6 +148,7 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 		else if (disk.inodes[curr].getType() == "DIR") {
 			// 目录使用inode和data_block的置0
 			disk.setINodeBitmap(curr, 0); // inode
+			/*
 			for (int i = 0; i < ADDR_PER_INODE; ++i) { // direct
 				int direct = disk.inodes[curr].getDirect(i);
 				if (direct == -1) {
@@ -171,6 +172,7 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 					}
 				}
 			}
+			*/
 
 			// 目录下的文件/子目录入栈
 			for (int i = 0; i < NUM_INODES; ++i) {
@@ -180,6 +182,42 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 			}
 		}
 	}
+}
+
+void FileManager::listAll(const int dir_inode_id)
+{
+	vector<string> name_list;
+	vector<string> type_list;
+	vector<string> size_list;
+	vector<string> time_created_list;
+
+	/* 将父目录添加进Vector */
+	if (dir_inode_id != 0){
+		int parent = disk.inodes[dir_inode_id].getParentINodeID();
+		name_list.push_back("..");
+		type_list.push_back(disk.inodes[parent].getType());
+		size_list.push_back("-");
+		time_created_list.push_back(disk.inodes[parent].getimeCreated());
+	}
+
+	/* 搜索当前目录下的所有文件 */
+	for (int i = 0; i < NUM_INODES; ++i) {
+		if (disk.getINodeBitmap(i) == 1 && 
+			disk.inodes[i].getParentINodeID() == dir_inode_id) {
+			name_list.push_back(disk.inodes[i].getName());
+			type_list.push_back(disk.inodes[i].getType());
+			if (disk.inodes[i].getType() == "FILE") {
+				string str = to_string(disk.inodes[i].getSize());
+				size_list.push_back(str);
+			}
+			else if (disk.inodes[i].getType() == "DIR") {
+				size_list.push_back("-");
+			}
+			time_created_list.push_back(disk.inodes[i].getimeCreated());
+		}
+	}
+	
+	
 }
 
 void FileManager::copyFile(const char* file_name1,const char* file_name2 )
