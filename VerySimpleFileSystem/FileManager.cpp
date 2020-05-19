@@ -87,7 +87,54 @@ void FileManager::createDirectory(const char* dir_name, const int parent_inode_i
 
 void FileManager::deleteDirectory(const int dir_inode_id)
 {
-	// 递归删除（树状）
+	// 递归删除（树状)
+	stack<int> s;
+	s.push(dir_inode_id);
+
+	while (!s.empty()) {
+		int curr = s.top();
+		s.pop();
+
+		// 处理文件
+		if (disk.inodes[curr].getType() == "FILE") {
+			// deleteFile();
+		}
+		// 处理目录
+		else if (disk.inodes[curr].getType() == "DIR") {
+			// 目录使用inode和data_block的置0
+			disk.setINodeBitmap(curr, 0); // inode
+			for (int i = 0; i < ADDR_PER_INODE; ++i) { // direct
+				int direct = disk.inodes[curr].getDirect(i);
+				if (direct == -1) {
+					break;
+				}
+				else {
+					disk.setDataBlockBitmap(direct, 0);
+				}
+			}
+			int indirect = disk.inodes[curr].getIndirect(); // indirect
+			if (indirect != -1) {
+				disk.setDataBlockBitmap(indirect, 0);
+				const char* data_block_addr = disk.getDataBlockAddrByID(indirect);
+				for (int i = 0; i < BLOCK_SIZE / 3; ++i) { // ?
+					int id = getIntFromChar(data_block_addr + i * 3);
+					if (id == -1) {
+						break;
+					}
+					else {
+						disk.setDataBlockBitmap(id, 0);
+					}
+				}
+			}
+
+			// 目录下的文件or子目录入栈
+			for (int i = 0; i < NUM_INODES; ++i) {
+				if (disk.getINodeBitmap(curr) == 1 && disk.inodes[curr].getParentINodeID() == curr) {
+					s.push(i);
+				}
+			}
+		}
+	}
 }
 
 void FileManager::copyFile(const char* file_name1,const char* file_name2 )

@@ -3,6 +3,7 @@
 #include<random>
 #include<ctime>
 #include<string>
+#include<stack>
 
 using namespace std;
 

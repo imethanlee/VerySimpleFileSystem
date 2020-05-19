@@ -158,4 +158,8 @@ void DiskSystem::initINode(const int inode_id, string type, const char* name, co
 	inodes[inode_id].setTimeCreated(time_created);
 	inodes[inode_id].setSize(size);
 	inodes[inode_id].setParentINodeID(parent_inode_id);
+	for (int i = 0; i < ADDR_PER_INODE; ++i) {
+		inodes[inode_id].setDirect(i, -1);
+	}
+	inodes[inode_id].setIndirect(-1);
 }
