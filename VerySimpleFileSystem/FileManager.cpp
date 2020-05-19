@@ -32,45 +32,80 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 		}
 	}
 	str[file_size * multiplier - 1] = '\0';
-	cout << str << endl;
+	//cout << str << endl;
 
 	/* 获取文件创建时间 */
 	string curr_time_str = getCurrTime();
 	char curr_time[20];
 	strcpy_s(curr_time, curr_time_str.c_str());
-	cout << curr_time << endl;
-	system("pause");
+	//cout << curr_time << endl;
+	//system("pause");
 
 	int totalBlockNum = (int)ceil(file_size_byte / BLOCK_SIZE);
 	int lastBlockSpace = file_size_byte % BLOCK_SIZE;
 	cout << "totalBlockNum: "<<totalBlockNum << endl;
 	cout << "lastBlockSpace: " << lastBlockSpace << endl;
 	cout << "sizeof(str): " << sizeof(str) << endl;
+
+	//read inode bitmap for free iniode block
+	int freeINid = disk.getFreeINodeID();
+	INode* inptr = disk.getINodeAddrByID(freeINid);
+	//build indirect pointer in inode
+	int indirDBid = 0;
+	char* indirPtr = NULL;
+	if (totalBlockNum > 10)
+	{
+		
+		//find a data block for indirect table
+		indirDBid = disk.getFreeDataBlockID();
+		indirPtr = disk.getDataBlockAddrByID(indirDBid);
+		inptr->setIndirect(indirDBid);
+		disk.setDataBlockBitmap(indirDBid,1);
+		cout << "find a data block for indirect table, data block id is: "<<indirDBid << endl;
+	}
+	
+	//modify inode bitmap
+	disk.setINodeBitmap(freeINid,1);
+	cout << "modify inode bitmap" << endl;
+	cout << '\n' << endl;
+
 	for (int i = 0; i < totalBlockNum; i++)
 	{
 		//read data bitmap for free data block
-		int freeDBid = disk.getFreeDataNodeID();
+		int freeDBid = disk.getFreeDataBlockID();
 		char* ptr = disk.getDataBlockAddrByID(freeDBid);
+		cout << "find a free data block: " << freeDBid << endl;
 		//save in data block
 		if (i < totalBlockNum - 1) 
 		{
 			memcpy(ptr, str + i * BLOCK_SIZE , BLOCK_SIZE);
-			cout << i;
 		}
 		else 
 		{
 			memcpy(ptr, str + i * BLOCK_SIZE, lastBlockSpace);
-			cout << i;
 		}
+		cout << "save in data block " << freeDBid << endl;
 		//modify data bitmap
-		disk.data_bitmap[freeDBid] = 1;
-		//read inode bitmap for free iniode block
-		int freeINid = disk.getFreeINodeID();
-		INode* inptr = disk.getINodeAddrByID(freeINid);
-		//struct inode(pointers inode_block->data bolck)
-		//inptr->direct[i] = disk.getDataBlockIDByAddr(ptr);
-		//modify inode bitmap
-		disk.data_bitmap[freeINid] = 1;
+		disk.setDataBlockBitmap(freeDBid, 1);
+		cout << freeDBid<<" modify data bitmap" << endl;
+
+		//struct inode(pointers inode_block->data bolck
+		//direct:
+		if (i < 10)
+		{
+			inptr->setDirect(i, freeDBid);
+			cout << i << " save into direct" << endl;
+		}
+		//indirct:
+		else
+		{
+			char* phyAddr = disk.getDataBlockAddrByID(indirDBid);
+			char db_ch[3];
+			getCharFromInt(freeDBid, db_ch);
+			memcpy(phyAddr + (i-10) * 3 * sizeof(char), db_ch, 3 * sizeof(char));
+			cout << i << " save into indirect" << endl;
+		}
+		cout << '\n' << endl;
 	}
 }
 
