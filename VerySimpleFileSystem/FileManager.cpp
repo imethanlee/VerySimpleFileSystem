@@ -217,7 +217,24 @@ void FileManager::listAll(const int dir_inode_id)
 		}
 	}
 	
-	
+	/* 格式化输出 */
+	cout << left
+		<< setw(20) << "Name"
+		<< setw(10) << "Type"
+		<< setw(10) << "Size"
+		<< "Time Created"
+		<< endl;
+	for (int i = 0; i < 59; ++i) {
+		cout << "-";
+	}
+	for (int i = 0; i < name_list.size(); ++i) {
+		cout << left
+			<< setw(20) << name_list[i]
+			<< setw(10) << type_list[i]
+			<< setw(10) << size_list[i]
+			<< time_created_list[i]
+			<< endl;
+	}
 }
 
 void FileManager::copyFile(const char* file_name1,const char* file_name2 )
