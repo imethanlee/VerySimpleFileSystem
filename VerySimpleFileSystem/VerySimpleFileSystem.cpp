@@ -7,7 +7,12 @@ int main() {
 	cout << fm.getDisk()->inodes[0].getSize() << endl;
 	cout << fm.getDisk()->inodes[0].getimeCreated() << endl;*/
 	
-	fm.createFile("fileName", 12,1024);
+	fm.createFile("hello.dat", 1, 1024);
+	fm.createDirectory("folder");
+	fm.listAll(0);
+	
+
+	system("pause");
 	cout << "data bitmap(create file1): " << endl;
 	int count = 0;
 	for (int i = 0; i < 20; i++)

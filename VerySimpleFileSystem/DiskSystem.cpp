@@ -162,4 +162,5 @@ void DiskSystem::initINode(const int inode_id, string type, const char* name, co
 		inodes[inode_id].setDirect(i, -1);
 	}
 	inodes[inode_id].setIndirect(-1);
+	setINodeBitmap(inode_id, 1);
 }

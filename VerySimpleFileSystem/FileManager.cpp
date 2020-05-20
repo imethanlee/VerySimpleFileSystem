@@ -15,7 +15,7 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 	
 	int totalBlockNum = (int)ceil((double)file_size / (double)BLOCK_SIZE);
 	int lastBlockSpace = file_size % BLOCK_SIZE;
-	cout << "!!!" << lastBlockSpace << endl;
+
 	/* 获取文件创建时间 */
 	string curr_time_str = getCurrTime();
 	char curr_time[20];
@@ -120,15 +120,10 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 			cout << "create file ERROR!" << endl;
 		}
 	}
-	//str[file_size * multiplier - 1] = '\0';
-	cout << str << endl;
-
-	
-	//cout << curr_time << endl;
-	//system("pause");
+	// str[file_size * multiplier - 1] = '\0';
+	// cout << str << endl;
 
 	createFileHelp(file_size_byte, str,file_name,parent_inode_id);
-	
 }
 
 void FileManager::deleteFile(const int file_inode_id)
@@ -160,10 +155,10 @@ void FileManager::deleteFile(const int file_inode_id)
 	}
 }
 
-void FileManager::createDirectory(const char* dir_name, const int parent_inode_id)
+void FileManager::createDirectory(const char* dir_name)
 {
 	int dir_inode_id = disk.getFreeINodeID();
-	disk.initINode(dir_inode_id, "DIR", dir_name, getCurrTime().c_str(), -1, parent_inode_id);
+	disk.initINode(dir_inode_id, "DIR", dir_name, getCurrTime().c_str(), -1, curr_dir_inode);
 }
 
 void FileManager::deleteDirectory(const int dir_inode_id)
@@ -220,6 +215,11 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 	}
 }
 
+void FileManager::changeDirectory(const int dir_inode_id)
+{
+	curr_dir_inode = dir_inode_id;
+}
+
 void FileManager::listAll(const int dir_inode_id)
 {
 	vector<string> name_list;
@@ -254,6 +254,7 @@ void FileManager::listAll(const int dir_inode_id)
 	}
 	
 	/* 格式化输出 */
+	cout << endl;
 	cout << left
 		<< setw(20) << "Name"
 		<< setw(10) << "Type"
@@ -263,6 +264,7 @@ void FileManager::listAll(const int dir_inode_id)
 	for (int i = 0; i < 59; ++i) {
 		cout << "-";
 	}
+	cout << endl;
 	for (int i = 0; i < name_list.size(); ++i) {
 		cout << left
 			<< setw(20) << name_list[i]
@@ -366,13 +368,12 @@ string FileManager::readFileHelp(const int inode_id)
 			}
 		}
 	}
-	cout << endl;
-	cout << "string in file1: " << endl;
-	cout << str << endl;
+	//cout << endl;
+	//cout << "string in file1: " << endl;
+	//cout << str << endl;
 	return str;
 }
 	
-		
 void FileManager::displayUsage()
 {
 	int count = 0;
