@@ -102,7 +102,7 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 {
 	//同目录下，查重名文件（待实现）
 	//file_name及inode各参数未设置
-	int parent_inode_id = 0;
+	int parent_inode_id = curr_dir_inode_id;
 	const int file_size_byte = file_size * multiplier;
 	/* 随机生成字符串 */
 	char* str = new char[file_size * multiplier];

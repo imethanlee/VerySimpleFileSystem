@@ -7,8 +7,8 @@ int main() {
 	cout << fm.getDisk()->inodes[0].getSize() << endl;
 	cout << fm.getDisk()->inodes[0].getimeCreated() << endl;*/
 	
-	//fm.createFile("hello.dat", 1, 1024);
-	//fm.createDirectory("folder");
+	fm.createFile("hello.dat", 1, 1024);
+	fm.createDirectory("folder");
 	fm.listAll(0);
 	
 
