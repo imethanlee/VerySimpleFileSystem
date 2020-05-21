@@ -39,11 +39,16 @@ DiskSystem::DiskSystem()
 	setINodeBitmap(root_inode_id, 1);
 	initINode(root_inode_id, "DIR", "root", getCurrTime().c_str(), -1, -1);
 	
+	/* 尝试从文件中恢复备份 */
+	// systemReload();
+
+	/* 欢迎界面 */
+	welcomeMessage();
 }
 
 DiskSystem::~DiskSystem()
 {
-	// 备份系统(Data block)
+	// 备份系统(All blocks)
 	FILE* fp;
 	errno_t err = fopen_s(&fp, "backup.dat", "w");
 	fwrite(system_start_addr, sizeof(char), SYSTEM_SIZE, fp);
@@ -58,18 +63,15 @@ void DiskSystem::systemReload()
 	// 从备份文件中读取
 	FILE* fp;
 	errno_t err = fopen_s(&fp, "backup.dat", "r");
-	fread(system_start_addr, sizeof(char), SYSTEM_SIZE, fp);
+	if (err == 0) {
+		fread(system_start_addr, sizeof(char), SYSTEM_SIZE, fp);
+	}
 	fclose(fp);
 }
 
 char* DiskSystem::getSystemStartAddr()
 {
 	return system_start_addr;
-}
-
-void DiskSystem::getSuperBlock()
-{
-	
 }
 
 char* DiskSystem::getDataBlockAddrByID(int block_id)
@@ -163,4 +165,24 @@ void DiskSystem::initINode(const int inode_id, string type, const char* name, co
 	}
 	inodes[inode_id].setIndirect(-1);
 	setINodeBitmap(inode_id, 1);
+}
+
+void DiskSystem::welcomeMessage()
+{
+	cout << "*****************************************************************************" << endl;
+	cout << "*                       Very Simple File System                             *" << endl;
+	cout << "*                Developer: Yuexin Li 201764621160                          *" << endl;
+	cout << "*                Developer: Jing Deng xxxxxxxxxxxx                          *" << endl;
+	cout << "*                Developer: Liyao Li  xxxxxxxxxxxx                          *" << endl;
+	cout << "*****************************************************************************" << endl;
+	cout << "*               1. Create a file: createFile <fileName> <fileSize>          *" << endl;
+	cout << "*               2. Delete a file: deleteFile <fileName>                     *" << endl;
+	cout << "*               3. Create a directory: createDir <dirName>                  *" << endl;
+	cout << "*               4. Delete a directory: deleteDir <dirName>                  *" << endl;
+	cout << "*               5. Change directory: changeDir <dirName>                    *" << endl;
+	cout << "*               6. List all the files: dir                                  *" << endl;
+	cout << "*               7. Copy a file: cp <exsitedFile> <newFile>                  *" << endl;
+	cout << "*               8. Display usage: sum                                       *" << endl;
+	cout << "*               9. Print file content: cat <filename>                       *" << endl;
+	cout << "*****************************************************************************" << endl;
 }

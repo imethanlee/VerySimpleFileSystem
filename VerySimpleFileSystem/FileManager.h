@@ -19,6 +19,6 @@ public:
 	DiskSystem* getDisk();
 private:
 	DiskSystem disk;
-	int curr_dir_inode;
+	int curr_dir_inode_id;
 };
 

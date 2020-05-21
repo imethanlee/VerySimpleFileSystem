@@ -3,11 +3,13 @@
 
 FileManager::FileManager()
 {
-	curr_dir_inode = 0;
+	curr_dir_inode_id = 0;
+
 }
 
 FileManager::~FileManager()
 {
+
 }
 
 void FileManager::createFileHelp(const int file_size,const char* str, const char* file_name, const int parent_inode_id)
@@ -158,7 +160,7 @@ void FileManager::deleteFile(const int file_inode_id)
 void FileManager::createDirectory(const char* dir_name)
 {
 	int dir_inode_id = disk.getFreeINodeID();
-	disk.initINode(dir_inode_id, "DIR", dir_name, getCurrTime().c_str(), -1, curr_dir_inode);
+	disk.initINode(dir_inode_id, "DIR", dir_name, getCurrTime().c_str(), -1, curr_dir_inode_id);
 }
 
 void FileManager::deleteDirectory(const int dir_inode_id)
@@ -217,7 +219,7 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 
 void FileManager::changeDirectory(const int dir_inode_id)
 {
-	curr_dir_inode = dir_inode_id;
+	curr_dir_inode_id = dir_inode_id;
 }
 
 void FileManager::listAll(const int dir_inode_id)
