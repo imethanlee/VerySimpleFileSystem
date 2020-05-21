@@ -101,6 +101,7 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 void FileManager::createFile(const char* file_name, const int file_size, const int multiplier)
 {
 	//同目录下，查重名文件（待实现）
+	//change a little bit for testing pushing
 	//file_name及inode各参数未设置
 	int parent_inode_id = curr_dir_inode_id;
 	const int file_size_byte = file_size * multiplier;
