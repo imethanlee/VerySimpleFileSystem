@@ -1,6 +1,5 @@
 #include "FileManager.h"
 
-
 FileManager::FileManager()
 {
 	curr_dir_inode_id = 0;
@@ -23,7 +22,6 @@ int FileManager::getnode(const char* path)
 		
 	}
 }
-
 
 void FileManager::createFileHelp(const int file_size,const char* str, const char* file_name, const int parent_inode_id)
 {
@@ -113,10 +111,22 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 
 void FileManager::createFile(const char* file_name, const int file_size, const int multiplier)
 {
-	// TODO: 同目录下，查重名文件（待实现）
+	/* TODO: 同目录下，查重名文件 */
+	/* 参考思路
+	** 根据curr_dir_inode_id，查找当前目录下的存在的文件
+	** 当前目录下的文件满足3个条件:
+	** 1. disk.inodes[inode_id].getParentINodeID() == curr_dir_inode_id
+	** 2. disk.getINodeBitmap(inode_id) == 1
+	** 3. disk.inodes[inode_id].getType() == "FILE"
+	** 在符合以上3个条件的inode中，使用getName()获取name
+	** 最后查重即可
+	*/
+
 	//file_name及inode各参数未设置
+
 	int parent_inode_id = curr_dir_inode_id;
 	const int file_size_byte = file_size * multiplier;
+
 	/* 随机生成字符串 */
 	char* str = new char[file_size * multiplier];
 	for (int i = 0; i < file_size * multiplier; ++i) {
@@ -135,15 +145,19 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 			cout << "create file ERROR!" << endl;
 		}
 	}
-	// str[file_size * multiplier - 1] = '\0';
-	// cout << str << endl;
 
-	createFileHelp(file_size_byte, str,file_name,parent_inode_id);
+	createFileHelp(file_size_byte, str, file_name, parent_inode_id);
 }
 
 void FileManager::deleteFile(const int file_inode_id)
 {
-	// TODO: use filename to find file-id	
+	/* TODO: 文件名称 -> file_inode_id 的映射 */
+	/* 参考思路
+	** 思路基本和createFile一致
+	** 也是在满足3个条件的inode里面去查name
+	*/
+
+
 	disk.setINodeBitmap(file_inode_id, 0);
 	
 	for (int i = 0; i < 11; i++)
@@ -172,13 +186,28 @@ void FileManager::deleteFile(const int file_inode_id)
 
 void FileManager::createDirectory(const char* dir_name)
 {
+	/* TODO: 同目录下，查重名子目录 */
+	/* 参考思路
+	** 根据curr_dir_inode_id，查找当前目录下的存在的子目录
+	** 当前目录下的文件满足3个条件:
+	** 1. disk.inodes[inode_id].getParentINodeID() == curr_dir_inode_id
+	** 2. disk.getINodeBitmap(inode_id) == 1
+	** 3. disk.inodes[inode_id].getType() == "DIR"
+	** 在符合以上3个条件的inode中，使用getName()获取name
+	** 最后查重即可
+	*/
 	int dir_inode_id = disk.getFreeINodeID();
 	disk.initINode(dir_inode_id, "DIR", dir_name, getCurrTime().c_str(), -1, curr_dir_inode_id);
 }
 
 void FileManager::deleteDirectory(const int dir_inode_id)
 {
-	// TODO: 用directory name 代替 dir_inode_id
+	/* TODO: dir_name -> dir_inode_id 的映射 */
+	/* 参考思路
+	** 思路基本和createDirectory一致
+	** 也是在满足3个条件的inode里面去查name
+	*/
+
 	// 递归删除（树状)
 	stack<int> s;
 	s.push(dir_inode_id);
@@ -193,33 +222,8 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 		}
 		// 处理目录
 		else if (disk.inodes[curr].getType() == "DIR") {
-			// 目录使用inode和data_block的置0
+			// 目录使用inode的置0
 			disk.setINodeBitmap(curr, 0); // inode
-			/*
-			for (int i = 0; i < ADDR_PER_INODE; ++i) { // direct
-				int direct = disk.inodes[curr].getDirect(i);
-				if (direct == -1) {
-					break;
-				}
-				else {
-					disk.setDataBlockBitmap(direct, 0);
-				}
-			}
-			int indirect = disk.inodes[curr].getIndirect(); // indirect
-			if (indirect != -1) {
-				disk.setDataBlockBitmap(indirect, 0);
-				const char* data_block_addr = disk.getDataBlockAddrByID(indirect);
-				for (int i = 0; i < BLOCK_SIZE / 3; ++i) { // ?
-					int id = getIntFromChar(data_block_addr + i * 3);
-					if (id == -1) {
-						break;
-					}
-					else {
-						disk.setDataBlockBitmap(id, 0);
-					}
-				}
-			}
-			*/
 
 			// 目录下的文件/子目录入栈
 			for (int i = 0; i < NUM_INODES; ++i) {
@@ -233,7 +237,11 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 
 void FileManager::changeDirectory(const int dir_inode_id)
 {
-	// TODO: 用directory name 代替 dir_inode_id
+	/* TODO: 目录名称 -> dir_inode_id的映射 */
+	/* 参考思路
+	** 和createDirectory基本一致
+	** 根据输入的目录名称查是否存在此目录
+	*/
 	curr_dir_inode_id = dir_inode_id;
 }
 
@@ -292,7 +300,7 @@ void FileManager::listAll(const int dir_inode_id)
 	}
 }
 
-void FileManager::copyFile(const int file1_inode_id,const char* file2_name )
+void FileManager::copyFile(const int file1_inode_id, const char* file2_name )
 {
 	/*
 	file1->file2:
@@ -413,4 +421,4 @@ void FileManager::printFileContents(int inode_id)
 DiskSystem* FileManager::getDisk()
 {
 	return &disk;
-}
+} 
