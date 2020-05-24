@@ -12,6 +12,19 @@ FileManager::~FileManager()
 
 }
 
+int FileManager::getnode(const char* path)
+{
+	if (path[0] != '/')
+	{
+		return -1;	//路径非法
+	}
+	else
+	{
+		
+	}
+}
+
+
 void FileManager::createFileHelp(const int file_size,const char* str, const char* file_name, const int parent_inode_id)
 {
 	
@@ -100,8 +113,7 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 
 void FileManager::createFile(const char* file_name, const int file_size, const int multiplier)
 {
-	//同目录下，查重名文件（待实现）
-	//change a little bit for testing pushing
+	// TODO: 同目录下，查重名文件（待实现）
 	//file_name及inode各参数未设置
 	int parent_inode_id = curr_dir_inode_id;
 	const int file_size_byte = file_size * multiplier;
@@ -131,7 +143,7 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 
 void FileManager::deleteFile(const int file_inode_id)
 {
-	//use filename to find file-id	
+	// TODO: use filename to find file-id	
 	disk.setINodeBitmap(file_inode_id, 0);
 	
 	for (int i = 0; i < 11; i++)
@@ -166,6 +178,7 @@ void FileManager::createDirectory(const char* dir_name)
 
 void FileManager::deleteDirectory(const int dir_inode_id)
 {
+	// TODO: 用directory name 代替 dir_inode_id
 	// 递归删除（树状)
 	stack<int> s;
 	s.push(dir_inode_id);
@@ -220,6 +233,7 @@ void FileManager::deleteDirectory(const int dir_inode_id)
 
 void FileManager::changeDirectory(const int dir_inode_id)
 {
+	// TODO: 用directory name 代替 dir_inode_id
 	curr_dir_inode_id = dir_inode_id;
 }
 

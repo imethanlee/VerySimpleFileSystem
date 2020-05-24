@@ -170,10 +170,11 @@ void DiskSystem::initINode(const int inode_id, string type, const char* name, co
 void DiskSystem::welcomeMessage()
 {
 	cout << "*****************************************************************************" << endl;
-	cout << "*                       Very Simple File System                             *" << endl;
+	// cout << "*                       Very Simple File System                             *" << endl;
+	cout << "*                  Highly Difficult File System                             *" << endl;
 	cout << "*                Developer: Yuexin Li 201764621160                          *" << endl;
-	cout << "*                Developer: Jing Deng xxxxxxxxxxxx                          *" << endl;
-	cout << "*                Developer: Liyao Li  xxxxxxxxxxxx                          *" << endl;
+	cout << "*                Developer: Jing Deng 201730700165                          *" << endl;
+	cout << "*                Developer: Liyao Li  201730613274                          *" << endl;
 	cout << "*****************************************************************************" << endl;
 	cout << "*               1. Create a file: createFile <fileName> <fileSize>          *" << endl;
 	cout << "*               2. Delete a file: deleteFile <fileName>                     *" << endl;

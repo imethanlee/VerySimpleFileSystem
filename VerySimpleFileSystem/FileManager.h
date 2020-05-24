@@ -5,6 +5,7 @@ class FileManager {
 public:
 	FileManager();
 	~FileManager();
+	int getnode(const char* path); // Get inode_id according to path
 	void createFile(const char* file_name, const int file_size, const int multiplier); // Create a file
 	void createFileHelp(const int file_size, const char* str, const char* file_name, const int parent_inode_id);
 	void deleteFile(const int file_inode_id); // Delete a file
