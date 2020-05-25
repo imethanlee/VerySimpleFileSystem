@@ -171,7 +171,7 @@ void DiskSystem::welcomeMessage()
 {
 	cout << "*****************************************************************************" << endl;
 	// cout << "*                       Very Simple File System                             *" << endl;
-	cout << "*                   Highly Difficult File System                            *" << endl;
+	cout << "*                  Highly Difficult File System                             *" << endl;
 	cout << "*                Developer: Yuexin Li 201764621160                          *" << endl;
 	cout << "*                Developer: Jing Deng 201730700165                          *" << endl;
 	cout << "*                Developer: Liyao Li  201730613274                          *" << endl;

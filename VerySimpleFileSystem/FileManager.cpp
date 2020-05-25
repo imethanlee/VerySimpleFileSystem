@@ -11,80 +11,16 @@ FileManager::~FileManager()
 
 }
 
-int FileManager::getNode(const char* path, const char* type)
+int FileManager::getnode(const char* path)
 {
-	// Return >= NUM_INODES: No such file or directory
-	// 返回值<0时, (-返回值-1)为上一个找得到的文件夹inode_id
-	int current_inode_id; // 开始向下寻找的inode
-	if (!strncmp(path, "/", 1)) // 输入绝对地址 /dir1
-		current_inode_id = 0;
-	else if (!strncmp(path, "..", 2)) // 输入相对地址 ../dir1
-		current_inode_id = disk.inodes[curr_dir_inode_id].getParentINodeID();
-	else current_inode_id = curr_dir_inode_id; // 输入相对地址 ./dir1或当前目录下文件
-	
-	// 把path中各级目录名提取出来
-	char* buf;
-	char tpath[NUM_INODES * 20] = "";
-	strcpy_s(tpath, path);
-	char* lpath[NUM_INODES]; // 存储各级目录名和文件名
-	lpath[0] = strtok_s(tpath, "/", &buf);
-	int length = 0; // 目录的级数
-	while (lpath[length])
+	if (path[0] != '/')
 	{
-		// cout << length << ": " << lpath[length] << endl;
-		length++;
-		lpath[length] = strtok_s(NULL, "/", &buf);
+		return -1;	//路径非法
 	}
-	int last_dir = length - 1; // 记录路径中最后一个目录的位置
-	if (!strcmp(type, "FILE")) last_dir = length - 2;
-
-	// cout << "length: " << length << endl;
-	for (int i = 0; i < length; ++i)
+	else
 	{
-		// 不处理目录为.或..
-		if (!(!strcmp(lpath[i], ".") || !strcmp(lpath[i], "..")))
-		{
-			for (int j = 1; j < NUM_INODES; ++j)
-			{
-				if (disk.inodes[j].getParentINodeID() == current_inode_id && disk.getINodeBitmap(j) == 1)
-				{
-					// 名字相同
-					if (!strcmp(disk.inodes[j].getName().data(), lpath[i]))
-					{
-						if (!strcmp(disk.inodes[j].getType().data(), "DIR"))
-						{
-							current_inode_id = j;
-							break;
-						}
-						if (i == last_dir + 1) // 到最后一级文件名
-						{
-							return j;
-						}
-					}
-				}
-				else if (j == NUM_INODES - 1) // 到最后一个inode还没找到
-				{
-					if (i == last_dir + 1 && !strcmp(type, "FILE")) // 到最后一级文件名没有找到符合的, 返回(-1-上一级目录的id)
-					{
-						return -1 - current_inode_id;
-					}
-					if (i <= last_dir && !strcmp(type, "FILE")) // 倒数第二级或之前的目录找不到, 返回值>NUM_INODES表示路径不正确
-					{
-						return NUM_INODES + 1;
-					}
-					if (i == last_dir && !strcmp(type, "DIR")) // 到最后一级文件夹名没有找到符合的, 返回(-1-上一级目录的id)
-					{
-						return -1 - current_inode_id;
-					}
-					if (i < last_dir && !strcmp(type, "DIR")) // 倒数第二级或之前的目录找不到, 返回值>NUM_INODES表示路径不正确
-					{
-						return NUM_INODES + 1;
-					}
-				}
-			}
-		}
+		
 	}
-	return current_inode_id;
 }
 
 void FileManager::createFileHelp(const int file_size,const char* str, const char* file_name, const int parent_inode_id)
@@ -173,253 +109,7 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 	}
 }
 
-void FileManager::createFile2(const char* file_name, const int file_size)
-{
-	/* TODO: 同目录下，查重名文件 END*/
-	/* 参考思路
-	** 根据curr_dir_inode_id，查找当前目录下的存在的文件
-	** 当前目录下的文件满足3个条件:
-	** 1. disk.inodes[inode_id].getParentINodeID() == curr_dir_inode_id
-	** 2. disk.getINodeBitmap(inode_id) == 1
-	** 3. disk.inodes[inode_id].getType() == "FILE"
-	** 在符合以上3个条件的inode中，使用getName()获取name
-	** 最后查重即可
-	*/
-	
-	const int result = getNode(file_name, "FILE");
-	if (result >= NUM_INODES)
-	{
-		// 找不到路径中的文件夹名
-		cout << "createFile: " << file_name << ": Unsuccessful operation. No such directory" << endl;
-	}
-	else if (result >= 0)
-	{
-		// 文件已经存在
-		cout << "createFile: " << file_name << ": Unsuccessful operation. File has been existed" << endl;
-	}
-	else
-	{
-		// 把file_name中各级目录名提取出来
-		char* buf;
-		char tpath[NUM_INODES * 20] = "";
-		strcpy_s(tpath, file_name);
-		char* lpath[NUM_INODES]; // 存储各级目录名和文件名
-		lpath[0] = strtok_s(tpath, "/", &buf);
-		int length = 0; // 目录的级数
-		while (lpath[length])
-		{
-			cout << length << ": " << lpath[length] << endl;
-			length++;
-			lpath[length] = strtok_s(NULL, "/", &buf);
-		}
-
-		const int parent_inode_id = -result - 1;
-		
-		//file_name及inode各参数未设置
-
-		const int multiplier = 1024;
-		// int parent_inode_id = curr_dir_inode_id;
-		const int file_size_byte = file_size * multiplier;
-
-		/* 随机生成字符串 */
-		char* str = new char[file_size * multiplier];
-		for (int i = 0; i < file_size * multiplier; ++i) {
-			switch (rand() % 3)
-			{
-			case 0:
-				str[i] = '0' + rand() % 10;
-				break;
-			case 1:
-				str[i] = 'a' + rand() % 26;
-				break;
-			case 2:
-				str[i] = 'A' + rand() % 26;
-				break;
-			default:
-				cout << "create file ERROR!" << endl;
-			}
-		}
-
-		createFileHelp(file_size_byte, str, lpath[length - 1], parent_inode_id);
-		cout << "createFile: " << file_name << ": Create file successfully" << endl;
-	}
-}
-
-void FileManager::deleteFile2(const char* file_name)
-{
-	/* TODO: 文件名称 -> file_inode_id 的映射 END*/
-	/* 参考思路
-	** 思路基本和createFile一致
-	** 也是在满足3个条件的inode里面去查name
-	*/
-
-	const int result = getNode(file_name, "FILE");
-	if (result <= 0)
-	{
-		// 找不到文件
-		cout << "deleteFile: " << file_name << ": Unsuccessful operation. No such file" << endl;
-	}
-	else if (result >= NUM_INODES)
-	{
-		// 找不到路径中的文件夹名
-		cout << "deleteFile: " << file_name << ": Unsuccessful operation. No such directory" << endl;
-	}
-	else
-	{
-		const int file_inode_id = result;
-		disk.setINodeBitmap(file_inode_id, 0);
-
-		for (int i = 0; i < 11; i++)
-		{
-			if (i < 10)
-			{
-				int file_data_id = disk.inodes[file_inode_id].getDirect(i);
-				disk.setDataBlockBitmap(file_data_id, 0);
-			}
-			if (i >= 10)
-			{
-				int indir_db_id = disk.inodes[file_inode_id].getIndirect();
-				char* phyAddr = disk.getDataBlockAddrByID(indir_db_id);
-
-				for (int j = 0; j < (int)ceil(BLOCK_SIZE / 3); j++)
-				{
-					char ch[3];
-					memcpy(ch, phyAddr + j * 3 * sizeof(char), 3 * sizeof(char));
-					int db_id = getIntFromChar(ch);
-					disk.setDataBlockBitmap(db_id, 0);
-				}
-				disk.setDataBlockBitmap(indir_db_id, 0);
-			}
-		}
-		cout << "deleteFile: " << file_name << ": Delete file successfully" << endl;
-	}
-}
-
-void FileManager::createDirectory2(const char* dir_name)
-{
-	/* TODO: 同目录下，查重名子目录 END*/
-	/* 参考思路
-	** 根据curr_dir_inode_id，查找当前目录下的存在的子目录
-	** 当前目录下的文件满足3个条件:
-	** 1. disk.inodes[inode_id].getParentINodeID() == curr_dir_inode_id
-	** 2. disk.getINodeBitmap(inode_id) == 1
-	** 3. disk.inodes[inode_id].getType() == "DIR"
-	** 在符合以上3个条件的inode中，使用getName()获取name
-	** 最后查重即可
-	*/
-	const int result = getNode(dir_name, "DIR");
-	if (result >= NUM_INODES)
-	{
-		// 找不到路径中的文件夹名
-		cout << "createDir: " << dir_name << ": Unsuccessful operation. No such directory" << endl;
-	}
-	else if (result >= 0)
-	{
-		// 文件夹已经存在
-		cout << "createDir: " << dir_name << ": Unsuccessful operation. Directory has been existed" << endl;
-	}
-	else
-	{
-		// 把dir_name中各级目录名提取出来
-		char* buf;
-		char tpath[NUM_INODES * 20] = "";
-		strcpy_s(tpath, dir_name);
-		char* lpath[NUM_INODES]; // 存储各级目录名和文件名
-		lpath[0] = strtok_s(tpath, "/", &buf);
-		int length = 0; // 目录的级数
-		while (lpath[length])
-		{
-			cout << length << ": " << lpath[length] << endl;
-			length++;
-			lpath[length] = strtok_s(NULL, "/", &buf);
-		}
-		
-		const int parent_inode_id = -result - 1;
-		int dir_inode_id = disk.getFreeINodeID();
-		disk.initINode(dir_inode_id, "DIR", lpath[length - 1], getCurrTime().c_str(), -1, parent_inode_id);
-		cout << "createDir: " << dir_name << ": Create directory successfully" << endl;
-	}
-}
-
-void FileManager::deleteDirectory2(const char* dir_name)
-{
-	/* TODO: dir_name -> dir_inode_id 的映射 END */
-	/* 参考思路
-	** 思路基本和createDirectory一致
-	** 也是在满足3个条件的inode里面去查name
-	*/
-	const int result = getNode(dir_name, "DIR");
-	if (result == 0)
-	{
-		// 根目录
-		cout << "deleteDir: " << dir_name << ": Unsuccessful operation. Cannot delete directory /" << endl;
-	}
-	else if (result == curr_dir_inode_id)
-	{
-		// 当前工作目录
-		cout << "deleteDir: " << dir_name << ": Unsuccessful operation. Cannot delete current working directory" << endl;
-	}
-	else if (result >= NUM_INODES || result < 0)
-	{
-		// 找不到路径中的文件夹名
-		cout << "deleteDir: " << dir_name << ": Unsuccessful operation. No such directory" << endl;
-	}
-	else
-	{
-		const int dir_inode_id = result;
-
-		// 递归删除（树状)
-		stack<int> s;
-		s.push(dir_inode_id);
-
-		while (!s.empty()) {
-			int curr = s.top();
-			s.pop();
-
-			// 处理文件
-			if (disk.inodes[curr].getType() == "FILE") {
-				// deleteFile();
-			}
-			// 处理目录
-			else if (disk.inodes[curr].getType() == "DIR") {
-				// 目录使用inode的置0
-				disk.setINodeBitmap(curr, 0); // inode
-
-				// 目录下的文件/子目录入栈
-				for (int i = 0; i < NUM_INODES; ++i) {
-					if (disk.getINodeBitmap(i) == 1 && disk.inodes[i].getParentINodeID() == curr) {
-						s.push(i);
-					}
-				}
-			}
-		}
-		cout << "deleteDir: " << dir_name << ": Delete directory successfully" << endl;
-	}
-}
-
-void FileManager::changeDirectory2(const char* dir_name)
-{
-	/* TODO: 目录名称 -> dir_inode_id的映射 END*/
-	/* 参考思路
-	** 和createDirectory基本一致
-	** 根据输入的目录名称查是否存在此目录
-	*/
-	const int result = getNode(dir_name, "DIR");
-	if (result >= NUM_INODES || result < 0)
-	{
-		// 找不到路径中的文件夹名
-		cout << "changeDir: " << dir_name << ": Unsuccessful operation. No such directory" << endl;
-	}
-	else
-	{
-		const int dir_inode_id = result;
-		curr_dir_inode_id = dir_inode_id;
-		cout << "changeDir: " << dir_name << ": Change current working directory successfully" << endl;
-		cout << "Current working directory: " << curr_dir_inode_id << endl;
-	}
-}
-
-void FileManager::createFile(const char* file_name, const int file_size, const int multiplier, const int parent_inode_id)
+void FileManager::createFile(const char* file_name, const int file_size, const int multiplier)
 {
 	/* TODO: 同目录下，查重名文件 */
 	/* 参考思路
@@ -434,7 +124,7 @@ void FileManager::createFile(const char* file_name, const int file_size, const i
 
 	//file_name及inode各参数未设置
 
-	// int parent_inode_id = curr_dir_inode_id;
+	int parent_inode_id = curr_dir_inode_id;
 	const int file_size_byte = file_size * multiplier;
 
 	/* 随机生成字符串 */
@@ -494,7 +184,7 @@ void FileManager::deleteFile(const int file_inode_id)
 	}
 }
 
-void FileManager::createDirectory(const char* dir_name, const int parent_inode_id)
+void FileManager::createDirectory(const char* dir_name)
 {
 	/* TODO: 同目录下，查重名子目录 */
 	/* 参考思路
@@ -507,7 +197,7 @@ void FileManager::createDirectory(const char* dir_name, const int parent_inode_i
 	** 最后查重即可
 	*/
 	int dir_inode_id = disk.getFreeINodeID();
-	disk.initINode(dir_inode_id, "DIR", dir_name, getCurrTime().c_str(), -1, parent_inode_id);
+	disk.initINode(dir_inode_id, "DIR", dir_name, getCurrTime().c_str(), -1, curr_dir_inode_id);
 }
 
 void FileManager::deleteDirectory(const int dir_inode_id)
