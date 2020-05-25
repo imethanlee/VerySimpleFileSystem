@@ -5,13 +5,20 @@ class FileManager {
 public:
 	FileManager();
 	~FileManager();
-	int getnode(const char* path); // Get inode_id according to path
-	void createFile(const char* file_name, const int file_size, const int multiplier); // Create a file
+	int getNode(const char* path, const char* type); // Get inode_id according to path
+	void createFile(const char* file_name, const int file_size, const int multiplier, const int parent_inode_id); // Create a file
 	void createFileHelp(const int file_size, const char* str, const char* file_name, const int parent_inode_id);
 	void deleteFile(const int file_inode_id); // Delete a file
-	void createDirectory(const char* dir_name); // Create a directory
+	void createDirectory(const char* dir_name, const int parent_inode_id); // Create a directory
 	void deleteDirectory(const int dir_inode_id); // Delete a directory
 	void changeDirectory(const int dir_inode_id); // Change current directory
+
+	void createFile2(const char* file_name, const int file_size); // Create a file
+	void deleteFile2(const char* file_name); // Delete a file
+	void createDirectory2(const char* dir_name); // Create a directory
+	void deleteDirectory2(const char* dir_name); // Delete a directory
+	void changeDirectory2(const char* dir_name); // Change current directory
+	
 	void listAll(const int dir_inode_id); // List all the files and sub-directories under current working directory
 	void copyFile(const int file1_inode_id, const char* file_name_2); // Copy a file
 	string readFileHelp(const int inode_id);
