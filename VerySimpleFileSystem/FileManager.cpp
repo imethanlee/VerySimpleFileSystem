@@ -612,6 +612,10 @@ void FileManager::listAll(const int dir_inode_id)
 
 void FileManager::copyFile(const int file1_inode_id, const char* file2_name )
 {
+	/*TODO: 1.map file-name->inode-id
+			2.重名判断（file2 是否已经存在）
+	*/
+
 	/*
 	file1->file2:
 	1.read file1
@@ -621,7 +625,10 @@ void FileManager::copyFile(const int file1_inode_id, const char* file2_name )
 	string str = readFileHelp(file1_inode_id);
 	const char* ch = str.c_str();
 	int file2_size = disk.inodes[file1_inode_id].getSize();
+	// if 重名：deletefile2
 	createFileHelp(file2_size, ch,file2_name,parent_inode_id);
+	
+
 }
 
 string FileManager::readFileHelp(const int inode_id)
