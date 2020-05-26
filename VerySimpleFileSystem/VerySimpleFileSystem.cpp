@@ -8,7 +8,7 @@ bool checkCommandLength(vector<string>& input,const int expected_length)
 	const int input_length = input.size();
 	if (input_length != expected_length)
 	{
-        cout << input[0] << ": Expected " << expected_length << " parameters, but given " << input_length << endl;
+        cout << input[0] << ": Expected " << expected_length - 1 << " parameters, but given " << input_length - 1 << endl;
         return false;
 	}
     return true;
@@ -89,12 +89,14 @@ int main() {
 	        if (checkCommandLength(str, 2))
 	        {
 				fm.changeDirectory2(str[1].data());
-                currentDir = fm.getCurrentPath().top();
+                stack<string> currentPath = fm.getCurrentPath();
+                if (currentPath.empty()) currentDir = "/";
+                else currentDir = currentPath.top();
 	        }
         }
         if (str[0] == "createFile") {
             if (checkCommandLength(str, 3))
-                fm.createFile2(str[1].data(), int(str[2].data()));
+                fm.createFile2(str[1].data(), atoi(str[2].data()));
         }
         if (str[0] == "deleteFile") {
             if (checkCommandLength(str, 2))
