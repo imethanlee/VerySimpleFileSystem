@@ -1,6 +1,5 @@
 #pragma once
 #include"DiskSystem.h"
-#include <stack>
 
 using namespace std;
 
@@ -18,7 +17,7 @@ public:
 
 	void createFile2(const char* file_name, const int file_size); // Create a file
 	void deleteFile2(const char* file_name); // Delete a file
-	void createDirectory2(const char* dir_name); // Create a directory
+	void createDirectory2(const char* dir_name, bool nested = false); // Create a directory
 	void deleteDirectory2(const char* dir_name); // Delete a directory
 	void changeDirectory2(const char* dir_name); // Change current directory
 	void copyFile2(const char* file_name_1, const char* file_name_2); // Copy a file

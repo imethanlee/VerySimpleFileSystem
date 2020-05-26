@@ -1,7 +1,6 @@
 #include "FileManager.h"
 #include <iostream>
 #include <sstream>
-#include <vector>
 
 bool checkCommandLength(vector<string>& input,const int expected_length)
 {
@@ -44,13 +43,14 @@ int main() {
 	// fm.deleteFile2("/a/a/c");
 	// fm.listAll(0);
 	// fm.listAll(2);
-	// fm.listAll(fm.getNode("/a/a", "DIR"));
+	// cout << fm.getNode("/a/b", "FILE");
 	// fm.listAll(11);
 	
     vector<string> str;
     string input;
     bool running = true;
     string currentDir = "/";
+    cout << endl;
     //when the str equals with the string "exit",break the cycling
     while (running) {
         //shell prompt
@@ -64,10 +64,11 @@ int main() {
         if (str.empty()) {
             continue;
         }
+    	
         if (str[0] == "exit") {
             running = false;
         }
-        if (str[0] == "pwd") {
+        else if (str[0] == "pwd") {
             stack<string> currentPath = fm.getCurrentPath();
             string curDir;
             if (currentPath.empty())
@@ -82,47 +83,62 @@ int main() {
             }
             cout << endl;
         }
-        if (str[0] == "dir") {
+        else if (str[0] == "dir") {
             fm.listAll2();
         }
-        if (str[0] == "changeDir") {
+        else if (str[0] == "changeDir") {
 	        if (checkCommandLength(str, 2))
 	        {
 				fm.changeDirectory2(str[1].data());
                 stack<string> currentPath = fm.getCurrentPath();
-                if (currentPath.empty()) currentDir = "/";
-                else currentDir = currentPath.top();
+                string curDir;
+                if (currentPath.empty())
+                {
+                    curDir = "/";
+                }
+                else
+                {
+                    while (!currentPath.empty())
+                    {
+                        curDir = currentPath.top();
+                        currentPath.pop();
+                    }
+                }
+                currentDir = curDir;
 	        }
         }
-        if (str[0] == "createFile") {
+        else if (str[0] == "createFile") {
             if (checkCommandLength(str, 3))
                 fm.createFile2(str[1].data(), atoi(str[2].data()));
         }
-        if (str[0] == "deleteFile") {
+        else if (str[0] == "deleteFile") {
             if (checkCommandLength(str, 2))
                 fm.deleteFile2(str[1].data());
         }
-        if (str[0] == "createDir") {
+        else if (str[0] == "createDir") {
             if (checkCommandLength(str, 2))
                 fm.createDirectory2(str[1].data());
         }
-        if (str[0] == "deleteDir") {
+        else if (str[0] == "deleteDir") {
             if (checkCommandLength(str, 2))
                 fm.deleteDirectory2(str[1].data());
         }
-        if (str[0] == "cp") {
+        else if (str[0] == "cp") {
             if (checkCommandLength(str, 3))
                 fm.copyFile2(str[1].data(), str[2].data());
         }
-        if (str[0] == "sum") {
+        else if (str[0] == "sum") {
             fm.displayUsage();
         }
-        if (str[0] == "cat") {
+        else if (str[0] == "cat") {
             if (checkCommandLength(str, 2))
                 fm.printFileContents2(str[1].data());
         }
-        if (str[0] == "help") {
+        else if (str[0] == "help") {
             fm.getDisk()->welcomeMessage();
+        }
+        else {
+            cout << "-bash: " << str[0] << ": Command not found" << endl;
         }
         str.clear();
         cout << endl;

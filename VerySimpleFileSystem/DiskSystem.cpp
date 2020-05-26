@@ -189,5 +189,4 @@ void DiskSystem::welcomeMessage()
 	cout << "*               11. Show this message: help                                 *" << endl;
 	cout << "*               12. Shut down this system: exit                             *" << endl;
 	cout << "*****************************************************************************" << endl;
-	cout << endl;
 }

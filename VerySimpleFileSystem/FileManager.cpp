@@ -13,7 +13,7 @@ FileManager::~FileManager()
 
 int FileManager::getNode(const char* path, const char* type)
 {
-	// Return >= NUM_INODES: No such file or directory
+	// 返回值>= NUM_INODES时, No such file or directory
 	// 返回值<0时, (-返回值-1)为上一个找得到的文件夹inode_id
 	int current_inode_id; // 开始向下寻找的inode
 	if (!strncmp(path, "/", 1)) // 输入绝对地址 /dir1
@@ -31,14 +31,9 @@ int FileManager::getNode(const char* path, const char* type)
 	int length = 0; // 目录的级数
 	while (lpath[length])
 	{
-		// cout << length << ": " << lpath[length] << endl;
 		length++;
 		lpath[length] = strtok_s(NULL, "/", &buf);
 	}
-	int last_dir = length - 1; // 记录路径中最后一个目录的位置
-	if (!strcmp(type, "FILE")) last_dir = length - 2;
-
-	// cout << "length: " << length << endl;
 	for (int i = 0; i < length; ++i)
 	{
 		// 不处理目录为.或..
@@ -48,35 +43,58 @@ int FileManager::getNode(const char* path, const char* type)
 			{
 				if (disk.inodes[j].getParentINodeID() == current_inode_id && disk.getINodeBitmap(j) == 1)
 				{
-					// 名字相同
-					if (!strcmp(disk.inodes[j].getName().data(), lpath[i]))
+					if (!strcmp(type, "DIR"))
 					{
 						if (!strcmp(disk.inodes[j].getType().data(), "DIR"))
 						{
-							current_inode_id = j;
-							break;
+							if (!strcmp(disk.inodes[j].getName().data(), lpath[i]))
+							{
+								current_inode_id = j;
+								if (i == length - 1)
+								{
+									return current_inode_id;
+								}
+								break;
+							}
 						}
-						if (i == last_dir + 1) // 到最后一级文件名
+					}
+					else
+					{
+						if (!strcmp(disk.inodes[j].getName().data(), lpath[i]))
 						{
-							return j;
+							if (i <= length - 2)
+							{
+								if (!strcmp(disk.inodes[j].getType().data(), "DIR"))
+								{
+									current_inode_id = j;
+									break;
+								}
+							}
+							else
+							{
+								if (!strcmp(disk.inodes[j].getType().data(), "FILE"))
+								{
+									return j;
+								}
+							}
 						}
 					}
 				}
 				else if (j == NUM_INODES - 1) // 到最后一个inode还没找到
 				{
-					if (i == last_dir + 1 && !strcmp(type, "FILE")) // 到最后一级文件名没有找到符合的, 返回(-1-上一级目录的id)
+					if (i == length - 1 && !strcmp(type, "FILE")) // 到最后一级文件名没有找到符合的, 返回(-1-上一级目录的id)
 					{
 						return -1 - current_inode_id;
 					}
-					if (i <= last_dir && !strcmp(type, "FILE")) // 倒数第二级或之前的目录找不到, 返回值>NUM_INODES表示路径不正确
+					if (i <= length - 2 && !strcmp(type, "FILE")) // 倒数第二级或之前的目录找不到, 返回值>NUM_INODES表示路径不正确
 					{
 						return NUM_INODES + 1;
 					}
-					if (i == last_dir && !strcmp(type, "DIR")) // 到最后一级文件夹名没有找到符合的, 返回(-1-上一级目录的id)
+					if (i == length - 1 && !strcmp(type, "DIR")) // 到最后一级文件夹名没有找到符合的, 返回(-1-上一级目录的id)
 					{
 						return -1 - current_inode_id;
 					}
-					if (i < last_dir && !strcmp(type, "DIR")) // 倒数第二级或之前的目录找不到, 返回值>NUM_INODES表示路径不正确
+					if (i < length - 1 && !strcmp(type, "DIR")) // 倒数第二级或之前的目录找不到, 返回值>NUM_INODES表示路径不正确
 					{
 						return NUM_INODES + 1;
 					}
@@ -298,7 +316,7 @@ void FileManager::deleteFile2(const char* file_name)
 	}
 }
 
-void FileManager::createDirectory2(const char* dir_name)
+void FileManager::createDirectory2(const char* dir_name, bool nested)
 {
 	/* TODO: 同目录下，查重名子目录 END*/
 	/* 参考思路
@@ -310,6 +328,7 @@ void FileManager::createDirectory2(const char* dir_name)
 	** 在符合以上3个条件的inode中，使用getName()获取name
 	** 最后查重即可
 	*/
+	// cout << "dir name: " << dir_name << endl;
 	// 把dir_name中各级目录名提取出来
 	char* buf;
 	char tpath[NUM_INODES * 20] = "";
@@ -331,12 +350,26 @@ void FileManager::createDirectory2(const char* dir_name)
 	else if (result >= NUM_INODES)
 	{
 		// 找不到路径中的文件夹名
-		cout << "createDir: " << dir_name << ": Unsuccessful operation. No such directory" << endl;
+		// 递归创建
+		string last_dir;
+		// 第一级目录不是.或..
+		if (!(!strcmp(lpath[0], ".") || !strcmp(lpath[0], "..")))
+		{
+			if (!strcmp(&tpath[0], "/"))
+				last_dir += "/";
+		}
+		for (int i = 0; i < length - 1; i++)
+		{
+			last_dir = last_dir + lpath[i] + "/";
+		}
+		createDirectory2(last_dir.data(), true);
+		createDirectory2(dir_name, true);
 	}
 	else if (result >= 0)
 	{
 		// 文件夹已经存在
-		cout << "createDir: " << dir_name << ": Unsuccessful operation. Directory has been existed" << endl;
+		if (!nested)
+			cout << "createDir: " << dir_name << ": Unsuccessful operation. Directory has been existed" << endl;
 	}
 	else
 	{
@@ -421,7 +454,7 @@ void FileManager::changeDirectory2(const char* dir_name)
 		const int dir_inode_id = result;
 		curr_dir_inode_id = dir_inode_id;
 		cout << "changeDir: " << dir_name << ": Change current working directory successfully" << endl;
-		cout << "Current working directory: " << curr_dir_inode_id << endl;
+		// cout << "Current working directory: " << curr_dir_inode_id << endl;
 	}
 }
 
@@ -473,7 +506,7 @@ void FileManager::copyFile2(const char* file_name_1, const char* file_name_2)
 		const int result = getNode(file_name_2, "FILE");
 		if (length == 0 || !strcmp(lpath[length - 1], ".") || !strcmp(lpath[length - 1], ".."))
 		{
-			cout << "createFile: " << file_name_2 << ": Unsuccessful operation. File name cannot be '/', '.', '..'" << endl;
+			cout << "cp: " << file_name_2 << ": Unsuccessful operation. File name cannot be '/', '.', '..'" << endl;
 		}
 		else if (result == 0)
 		{
@@ -503,6 +536,7 @@ void FileManager::copyFile2(const char* file_name_1, const char* file_name_2)
 			string str = readFileHelp(file1_inode_id);
 			const char* ch = str.c_str();
 			int file2_size = disk.inodes[file1_inode_id].getSize();
+			// cout << "file1: " << file2_size << " " << file1_inode_id << " " << disk.inodes[file1_inode_id].getType() << endl;
 			createFileHelp(file2_size, ch, lpath[length - 1], parent_inode_id);
 			
 			cout << "cp: Copy file successfully" << endl;
@@ -562,7 +596,7 @@ void FileManager::listAll2()
 	}
 
 	/* 格式化输出 */
-	cout << endl;
+	// cout << endl;
 	cout << left
 		<< setw(20) << "Name"
 		<< setw(10) << "Type"
