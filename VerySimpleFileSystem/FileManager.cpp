@@ -187,7 +187,26 @@ void FileManager::createFile2(const char* file_name, const int file_size)
 	*/
 	
 	const int result = getNode(file_name, "FILE");
-	if (result >= NUM_INODES)
+	// 把file_name中各级目录名提取出来
+	char* buf;
+	char tpath[NUM_INODES * 20] = "";
+	strcpy_s(tpath, file_name);
+	char* lpath[NUM_INODES]; // 存储各级目录名和文件名
+	lpath[0] = strtok_s(tpath, "/", &buf);
+	int length = 0; // 目录的级数
+	while (lpath[length])
+	{
+		length++;
+		lpath[length] = strtok_s(NULL, "/", &buf);
+	}
+
+	const int parent_inode_id = -result - 1;
+
+	if (length == 0 || !strcmp(lpath[length - 1], ".") || !strcmp(lpath[length - 1], ".."))
+	{
+		cout << "createFile: " << file_name << ": Unsuccessful operation. File name cannot be '/', '.', '..'" << endl;
+	}
+	else if (result >= NUM_INODES)
 	{
 		// 找不到路径中的文件夹名
 		cout << "createFile: " << file_name << ": Unsuccessful operation. No such directory" << endl;
@@ -199,21 +218,6 @@ void FileManager::createFile2(const char* file_name, const int file_size)
 	}
 	else
 	{
-		// 把file_name中各级目录名提取出来
-		char* buf;
-		char tpath[NUM_INODES * 20] = "";
-		strcpy_s(tpath, file_name);
-		char* lpath[NUM_INODES]; // 存储各级目录名和文件名
-		lpath[0] = strtok_s(tpath, "/", &buf);
-		int length = 0; // 目录的级数
-		while (lpath[length])
-		{
-			length++;
-			lpath[length] = strtok_s(NULL, "/", &buf);
-		}
-
-		const int parent_inode_id = -result - 1;
-		
 		//file_name及inode各参数未设置
 
 		const int multiplier = 1024;
@@ -306,8 +310,25 @@ void FileManager::createDirectory2(const char* dir_name)
 	** 在符合以上3个条件的inode中，使用getName()获取name
 	** 最后查重即可
 	*/
+	// 把dir_name中各级目录名提取出来
+	char* buf;
+	char tpath[NUM_INODES * 20] = "";
+	strcpy_s(tpath, dir_name);
+	char* lpath[NUM_INODES]; // 存储各级目录名和文件名
+	lpath[0] = strtok_s(tpath, "/", &buf);
+	int length = 0; // 目录的级数
+	while (lpath[length])
+	{
+		length++;
+		lpath[length] = strtok_s(NULL, "/", &buf);
+	}
+
 	const int result = getNode(dir_name, "DIR");
-	if (result >= NUM_INODES)
+	if (length == 0 || !strcmp(lpath[length - 1], ".") || !strcmp(lpath[length - 1], ".."))
+	{
+		cout << "createDir: " << dir_name << ": Unsuccessful operation. Directory name cannot be '/', '.', '..'" << endl;
+	}
+	else if (result >= NUM_INODES)
 	{
 		// 找不到路径中的文件夹名
 		cout << "createDir: " << dir_name << ": Unsuccessful operation. No such directory" << endl;
@@ -319,19 +340,6 @@ void FileManager::createDirectory2(const char* dir_name)
 	}
 	else
 	{
-		// 把dir_name中各级目录名提取出来
-		char* buf;
-		char tpath[NUM_INODES * 20] = "";
-		strcpy_s(tpath, dir_name);
-		char* lpath[NUM_INODES]; // 存储各级目录名和文件名
-		lpath[0] = strtok_s(tpath, "/", &buf);
-		int length = 0; // 目录的级数
-		while (lpath[length])
-		{
-			length++;
-			lpath[length] = strtok_s(NULL, "/", &buf);
-		}
-		
 		const int parent_inode_id = -result - 1;
 		int dir_inode_id = disk.getFreeINodeID();
 		disk.initINode(dir_inode_id, "DIR", lpath[length - 1], getCurrTime().c_str(), -1, parent_inode_id);
@@ -376,7 +384,7 @@ void FileManager::deleteDirectory2(const char* dir_name)
 
 			// 处理文件
 			if (disk.inodes[curr].getType() == "FILE") {
-				deleteFile(curr);
+				// deleteFile();
 			}
 			// 处理目录
 			else if (disk.inodes[curr].getType() == "DIR") {
@@ -448,8 +456,26 @@ void FileManager::copyFile2(const char* file_name_1, const char* file_name_2)
 	else
 	{
 		// file1存在
+		
+		// 把file_name_2中各级目录名提取出来
+		char* buf;
+		char tpath[NUM_INODES * 20] = "";
+		strcpy_s(tpath, file_name_2);
+		char* lpath[NUM_INODES]; // 存储各级目录名和文件名
+		lpath[0] = strtok_s(tpath, "/", &buf);
+		int length = 0; // 目录的级数
+		while (lpath[length])
+		{
+			length++;
+			lpath[length] = strtok_s(NULL, "/", &buf);
+		}
+
 		const int result = getNode(file_name_2, "FILE");
-		if (result == 0)
+		if (length == 0 || !strcmp(lpath[length - 1], ".") || !strcmp(lpath[length - 1], ".."))
+		{
+			cout << "createFile: " << file_name_2 << ": Unsuccessful operation. File name cannot be '/', '.', '..'" << endl;
+		}
+		else if (result == 0)
 		{
 			// 根目录
 			cout << "cp: " << file_name_2 << ": Unsuccessful operation. Name of new file cannot be /" << endl;
@@ -473,18 +499,6 @@ void FileManager::copyFile2(const char* file_name_1, const char* file_name_2)
 		// 找到最后一级路径
 		if (parent_inode_id != -1)
 		{
-			// 把file_name_2中各级目录名提取出来
-			char* buf;
-			char tpath[NUM_INODES * 20] = "";
-			strcpy_s(tpath, file_name_2);
-			char* lpath[NUM_INODES]; // 存储各级目录名和文件名
-			lpath[0] = strtok_s(tpath, "/", &buf);
-			int length = 0; // 目录的级数
-			while (lpath[length])
-			{
-				length++;
-				lpath[length] = strtok_s(NULL, "/", &buf);
-			}
 			
 			string str = readFileHelp(file1_inode_id);
 			const char* ch = str.c_str();

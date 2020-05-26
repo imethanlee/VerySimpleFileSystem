@@ -125,6 +125,7 @@ int main() {
             fm.getDisk()->welcomeMessage();
         }
         str.clear();
+        cout << endl;
     }
     return 0;
 }
