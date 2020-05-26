@@ -40,7 +40,7 @@ DiskSystem::DiskSystem()
 	initINode(root_inode_id, "DIR", "root", getCurrTime().c_str(), -1, -1);
 	
 	/* 尝试从文件中恢复备份 */
-	// systemReload();
+	systemReload();
 
 	/* 欢迎界面 */
 	welcomeMessage();
@@ -185,5 +185,9 @@ void DiskSystem::welcomeMessage()
 	cout << "*               7. Copy a file: cp <exsitedFile> <newFile>                  *" << endl;
 	cout << "*               8. Display usage: sum                                       *" << endl;
 	cout << "*               9. Print file content: cat <filename>                       *" << endl;
+	cout << "*               10. Show current absolute path: pwd                         *" << endl;
+	cout << "*               11. Show this message: help                                 *" << endl;
+	cout << "*               12. Shut down this system: exit                             *" << endl;
 	cout << "*****************************************************************************" << endl;
+	cout << endl;
 }

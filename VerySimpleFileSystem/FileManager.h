@@ -1,5 +1,6 @@
 #pragma once
 #include"DiskSystem.h"
+#include <stack>
 
 using namespace std;
 
@@ -21,6 +22,9 @@ public:
 	void deleteDirectory2(const char* dir_name); // Delete a directory
 	void changeDirectory2(const char* dir_name); // Change current directory
 	void copyFile2(const char* file_name_1, const char* file_name_2); // Copy a file
+	stack<string> getCurrentPath(); // Get current working absolute path
+	void listAll2(); // List all the files and sub-directories under current working directory
+	void printFileContents2(const char* file_name); // Print out the file contents
 	
 	void listAll(const int dir_inode_id); // List all the files and sub-directories under current working directory
 	void copyFile(const int file1_inode_id, const char* file_name_2); // Copy a file

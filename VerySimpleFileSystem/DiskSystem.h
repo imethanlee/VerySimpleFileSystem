@@ -19,9 +19,9 @@ public:
 	int getFreeINodeID();	// 获取空闲I-Node ID
 	int getFreeDataBlockID(); // 获取空闲Data Block ID
 	void initINode(const int inode_id, string type, const char* name, const char* time_created, const int size, const int parent_inode_id);
-private:
+
 	void welcomeMessage();
-public:
+
 	INode* inodes;				// i-node地址
 private:
 	char* system_start_addr;	// 整个系统起始地址

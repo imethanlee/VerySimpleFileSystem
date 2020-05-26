@@ -497,6 +497,98 @@ void FileManager::copyFile2(const char* file_name_1, const char* file_name_2)
 	}
 }
 
+stack<string> FileManager::getCurrentPath()
+{
+	stack<string>path;
+	if (curr_dir_inode_id != 0)
+	{
+		int parent_id = disk.inodes[curr_dir_inode_id].getParentINodeID();
+		path.push(disk.inodes[curr_dir_inode_id].getName());
+		while (parent_id != 0)
+		{
+			path.push(disk.inodes[parent_id].getName());
+			parent_id = disk.inodes[parent_id].getParentINodeID();
+		}
+	}
+	return path;
+}
+
+void FileManager::listAll2()
+{
+	vector<string> name_list;
+	vector<string> type_list;
+	vector<string> size_list;
+	vector<string> time_created_list;
+	const int dir_inode_id = curr_dir_inode_id;
+	
+	/* 将父目录添加进Vector */
+	if (dir_inode_id != 0) {
+		int parent = disk.inodes[dir_inode_id].getParentINodeID();
+		name_list.push_back("..");
+		type_list.push_back(disk.inodes[parent].getType());
+		size_list.push_back("-");
+		time_created_list.push_back(disk.inodes[parent].getimeCreated());
+	}
+
+	/* 搜索当前目录下的所有文件 */
+	for (int i = 0; i < NUM_INODES; ++i) {
+		if (disk.getINodeBitmap(i) == 1 &&
+			disk.inodes[i].getParentINodeID() == dir_inode_id) {
+			name_list.push_back(disk.inodes[i].getName());
+			type_list.push_back(disk.inodes[i].getType());
+			if (disk.inodes[i].getType() == "FILE") {
+				string str = to_string(disk.inodes[i].getSize());
+				size_list.push_back(str);
+			}
+			else if (disk.inodes[i].getType() == "DIR") {
+				size_list.push_back("-");
+			}
+			time_created_list.push_back(disk.inodes[i].getimeCreated());
+		}
+	}
+
+	/* 格式化输出 */
+	cout << endl;
+	cout << left
+		<< setw(20) << "Name"
+		<< setw(10) << "Type"
+		<< setw(10) << "Size"
+		<< "Time Created"
+		<< endl;
+	for (int i = 0; i < 59; ++i) {
+		cout << "-";
+	}
+	cout << endl;
+	for (int i = 0; i < name_list.size(); ++i) {
+		cout << left
+			<< setw(20) << name_list[i]
+			<< setw(10) << type_list[i]
+			<< setw(10) << size_list[i]
+			<< time_created_list[i]
+			<< endl;
+	}
+}
+
+void FileManager::printFileContents2(const char* file_name)
+{
+	const int result = getNode(file_name, "FILE");
+	if (result <= 0)
+	{
+		// 找不到文件
+		cout << "cat: " << file_name << ": Unsuccessful operation. No such file" << endl;
+	}
+	else if (result >= NUM_INODES)
+	{
+		// 找不到路径中的文件夹名
+		cout << "cat: " << file_name << ": Unsuccessful operation. No such directory" << endl;
+	}
+	else
+	{
+		string str = readFileHelp(result);
+		cout << str << endl;
+	}
+}
+
 void FileManager::createFile(const char* file_name, const int file_size, const int multiplier, const int parent_inode_id)
 {
 	/* TODO: 同目录下，查重名文件 */
