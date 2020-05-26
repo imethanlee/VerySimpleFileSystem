@@ -376,7 +376,7 @@ void FileManager::deleteDirectory2(const char* dir_name)
 
 			// 处理文件
 			if (disk.inodes[curr].getType() == "FILE") {
-				// deleteFile();
+				deleteFile(curr);
 			}
 			// 处理目录
 			else if (disk.inodes[curr].getType() == "DIR") {
