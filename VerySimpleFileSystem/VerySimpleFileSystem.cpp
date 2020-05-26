@@ -87,7 +87,10 @@ int main() {
         }
         if (str[0] == "changeDir") {
 	        if (checkCommandLength(str, 2))
+	        {
 				fm.changeDirectory2(str[1].data());
+                currentDir = fm.getCurrentPath().top();
+	        }
         }
         if (str[0] == "createFile") {
             if (checkCommandLength(str, 3))
