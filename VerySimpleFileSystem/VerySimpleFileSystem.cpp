@@ -22,11 +22,14 @@ int main() {
 	fm.createFile("a", 1, 1024, 8);//10
 	fm.createDirectory("a", 8);//11
 	fm.createFile("b", 1, 1024, 8);//12
-	fm.listAll(0);
-	fm.listAll(2);
 	// int result = fm.getNode("/a/a/a/d", "FILE");
 	// cout << "Get Node: " << -result - 1 << endl;
-	fm.changeDirectory2("/a/a/a");
-	fm.changeDirectory2("..");
-	fm.listAll(8);
+	// fm.changeDirectory2("/a/a/a");
+	// fm.changeDirectory2("..");
+	fm.copyFile2("/b", "/a/a/c");
+	// fm.deleteFile2("/a/a/c");
+	// fm.listAll(0);
+	// fm.listAll(2);
+	fm.listAll(fm.getNode("/a/a", "DIR"));
+	// fm.listAll(11);
 }

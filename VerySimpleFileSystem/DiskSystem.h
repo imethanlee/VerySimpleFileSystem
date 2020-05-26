@@ -1,6 +1,8 @@
 #pragma once
 #include "util.h"
 
+using namespace std;
+
 class DiskSystem {
 public:
 	DiskSystem();		// 构造函数

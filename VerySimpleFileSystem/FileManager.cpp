@@ -208,7 +208,6 @@ void FileManager::createFile2(const char* file_name, const int file_size)
 		int length = 0; // 目录的级数
 		while (lpath[length])
 		{
-			cout << length << ": " << lpath[length] << endl;
 			length++;
 			lpath[length] = strtok_s(NULL, "/", &buf);
 		}
@@ -329,7 +328,6 @@ void FileManager::createDirectory2(const char* dir_name)
 		int length = 0; // 目录的级数
 		while (lpath[length])
 		{
-			cout << length << ": " << lpath[length] << endl;
 			length++;
 			lpath[length] = strtok_s(NULL, "/", &buf);
 		}
@@ -416,6 +414,86 @@ void FileManager::changeDirectory2(const char* dir_name)
 		curr_dir_inode_id = dir_inode_id;
 		cout << "changeDir: " << dir_name << ": Change current working directory successfully" << endl;
 		cout << "Current working directory: " << curr_dir_inode_id << endl;
+	}
+}
+
+void FileManager::copyFile2(const char* file_name_1, const char* file_name_2)
+{
+	/*TODO: 1.map file-name->inode-id END
+			2.重名判断（file2 是否已经存在）
+	*/
+
+	/*
+	file1->file2:
+	1.read file1
+	2.create and write file2
+	*/
+	int parent_inode_id = -1;
+	const int file1_inode_id = getNode(file_name_1, "FILE");
+	if (file1_inode_id == 0)
+	{
+		// 根目录
+		cout << "cp: " << file_name_1 << ": Unsuccessful operation. / is a directory, not a file" << endl;
+	}
+	else if (file1_inode_id >= NUM_INODES)
+	{
+		// 找不到路径中的文件夹名
+		cout << "cp: " << file_name_1 << ": Unsuccessful operation. No such directory" << endl;
+	}
+	else if (file1_inode_id < 0)
+	{
+		// file1不存在, 找到最后一级文件夹
+		cout << "cp: " << file_name_1 << ": Unsuccessful operation. No such file" << endl;
+	}
+	else
+	{
+		// file1存在
+		const int result = getNode(file_name_2, "FILE");
+		if (result == 0)
+		{
+			// 根目录
+			cout << "cp: " << file_name_2 << ": Unsuccessful operation. Name of new file cannot be /" << endl;
+		}
+		else if (result >= NUM_INODES)
+		{
+			// 找不到路径中的文件夹名
+			cout << "cp: " << file_name_2 << ": Unsuccessful operation. No such directory" << endl;
+		}
+		else if (result < 0)
+		{
+			// file2不存在, 找到最后一级文件夹
+			parent_inode_id = -result - 1;
+		}
+		else
+		{
+			// file2存在, 先删除
+			parent_inode_id = disk.inodes[result].getParentINodeID();
+			deleteFile(result);
+		}
+		// 找到最后一级路径
+		if (parent_inode_id != -1)
+		{
+			// 把file_name_2中各级目录名提取出来
+			char* buf;
+			char tpath[NUM_INODES * 20] = "";
+			strcpy_s(tpath, file_name_2);
+			char* lpath[NUM_INODES]; // 存储各级目录名和文件名
+			lpath[0] = strtok_s(tpath, "/", &buf);
+			int length = 0; // 目录的级数
+			while (lpath[length])
+			{
+				length++;
+				lpath[length] = strtok_s(NULL, "/", &buf);
+			}
+			
+			string str = readFileHelp(file1_inode_id);
+			const char* ch = str.c_str();
+			int file2_size = disk.inodes[file1_inode_id].getSize();
+			createFileHelp(file2_size, ch, lpath[length - 1], parent_inode_id);
+			
+			cout << "cp: Copy file successfully" << endl;
+			// cout << "Parent ID: " << disk.inodes[getNode(file_name_2, "FILE")].getParentINodeID() << endl;
+		}
 	}
 }
 

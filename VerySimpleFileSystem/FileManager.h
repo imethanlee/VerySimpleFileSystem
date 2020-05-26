@@ -1,6 +1,8 @@
 #pragma once
 #include"DiskSystem.h"
 
+using namespace std;
+
 class FileManager {
 public:
 	FileManager();
@@ -18,6 +20,7 @@ public:
 	void createDirectory2(const char* dir_name); // Create a directory
 	void deleteDirectory2(const char* dir_name); // Delete a directory
 	void changeDirectory2(const char* dir_name); // Change current directory
+	void copyFile2(const char* file_name_1, const char* file_name_2); // Copy a file
 	
 	void listAll(const int dir_inode_id); // List all the files and sub-directories under current working directory
 	void copyFile(const int file1_inode_id, const char* file_name_2); // Copy a file
