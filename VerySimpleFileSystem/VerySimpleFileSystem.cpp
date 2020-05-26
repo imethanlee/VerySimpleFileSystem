@@ -15,37 +15,7 @@ bool checkCommandLength(vector<string>& input,const int expected_length)
 
 int main() {
 	FileManager fm;
-	/*cout << fm.getDisk()->inodes[0].getName() << endl;
-	cout << fm.getDisk()->inodes[0].getType() << endl;
-	cout << fm.getDisk()->inodes[0].getSize() << endl;
-	cout << fm.getDisk()->inodes[0].getimeCreated() << endl;*/
-	
-	// fm.createFile("hello.dat", 1, 1024);
-	// fm.createDirectory("folder1", 0);
-	// fm.createDirectory("folder2", 2);
-	// fm.createFile("a", 1, 1024, 0);//1
-	// fm.createDirectory("root", 0);//2
-	// fm.createFile("b", 1, 1024, 0);//3
-	// fm.createFile("a", 1, 1024, 2);//4
-	// fm.createDirectory("root", 2);//5
-	// fm.createFile("b", 1, 1024, 2);//6
-	// fm.createFile("a", 1, 1024, 5);//7
-	// fm.createDirectory("root", 5);//8
-	// fm.createFile("b", 1, 1024, 5);//9
-	// fm.createFile("a", 1, 1024, 8);//10
-	// fm.createDirectory("a", 8);//11
-	// fm.createFile("b", 1, 1024, 8);//12
-	// int result = fm.getNode("/a/a/a/d", "FILE");
-	// cout << "Get Node: " << -result - 1 << endl;
-	// fm.changeDirectory2("/root");
-	// fm.changeDirectory2("root");
-	// fm.copyFile2("/b", "/a/a/c");
-	// fm.deleteFile2("/a/a/c");
-	// fm.listAll(0);
-	// fm.listAll(2);
-	// cout << fm.getNode("/a/b", "FILE");
-	// fm.listAll(11);
-	
+
     vector<string> str;
     string input;
     bool running = true;
@@ -109,7 +79,16 @@ int main() {
         }
         else if (str[0] == "createFile") {
             if (checkCommandLength(str, 3))
-                fm.createFile2(str[1].data(), atoi(str[2].data()));
+            {
+                if (atoi(str[2].data()) <= 351)
+                {
+                    fm.createFile2(str[1].data(), atoi(str[2].data()));
+                }
+                else
+                {
+                    cerr << "File size too large" << endl;
+                } 
+            }
         }
         else if (str[0] == "deleteFile") {
             if (checkCommandLength(str, 2))

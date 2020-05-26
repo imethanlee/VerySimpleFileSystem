@@ -6,7 +6,6 @@
 #include<stack>
 #include<vector>
 #include<iomanip>
-
 using namespace std;
 
 const int SYSTEM_SIZE = 16 * 1024 * 1024;		// System总大小

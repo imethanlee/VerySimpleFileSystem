@@ -120,7 +120,7 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 	int freeINid = disk.getFreeINodeID();
 	disk.initINode(freeINid, "FILE", file_name, curr_time, file_size, parent_inode_id);
 	INode* inptr = disk.getINodeAddrByID(freeINid);
-	cout << "find inode: " << freeINid << endl;
+	// cout << "find inode: " << freeINid << endl;
 
 	//build indirect pointer in inode
 	int indirDBid = 0;
@@ -133,14 +133,14 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 		indirPtr = disk.getDataBlockAddrByID(indirDBid);
 		inptr->setIndirect(indirDBid);
 		disk.setDataBlockBitmap(indirDBid, 1);
-		cout << "find a data block for indirect table, data block id is: " << indirDBid << endl;
+		// cout << "find a data block for indirect table, data block id is: " << indirDBid << endl;
 	}
 
 	//modify inode bitmap
 
 	disk.setINodeBitmap(freeINid, 1);
-	cout << "modify inode bitmap" << endl;
-	cout << '\n' << endl;
+	//cout << "modify inode bitmap" << endl;
+	//cout << '\n' << endl;
 
 	for (int i = 0; i < totalBlockNum; i++)
 	{
@@ -148,7 +148,7 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 		//read data bitmap for free data block
 		int freeDBid = disk.getFreeDataBlockID();
 		char* ptr = disk.getDataBlockAddrByID(freeDBid);
-		cout << "find a free data block: " << freeDBid << endl;
+		//cout << "find a free data block: " << freeDBid << endl;
 		//save in data block
 		if (lastBlockSpace != 0)
 		{
@@ -165,17 +165,17 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 		{	
 				memcpy(ptr, str + i * BLOCK_SIZE, BLOCK_SIZE);
 		}
-		cout << "save in data block " << freeDBid << endl;
+		//cout << "save in data block " << freeDBid << endl;
 		//modify data bitmap
 		disk.setDataBlockBitmap(freeDBid, 1);
-		cout << freeDBid << " modify data bitmap" << endl;
+		//cout << freeDBid << " modify data bitmap" << endl;
 
 		//struct inode(pointers inode_block->data bolck
 		//direct:
 		if (i < 10)
 		{
 			inptr->setDirect(i, freeDBid);
-			cout << i << " save into direct" << endl;
+			//cout << i << " save into direct" << endl;
 		}
 		//indirct:
 		else
@@ -184,10 +184,10 @@ void FileManager::createFileHelp(const int file_size,const char* str, const char
 			char db_ch[3];
 			getCharFromInt(freeDBid, db_ch);
 			memcpy(phyAddr + (i - 10) * 3 * sizeof(char), db_ch, 3 * sizeof(char));
-			cout << i << " save into indirect" << endl;
+			//cout << i << " save into indirect" << endl;
 		}
 
-		cout << '\n' << endl;
+		//cout << '\n' << endl;
 	}
 }
 
@@ -585,8 +585,8 @@ void FileManager::listAll2()
 			name_list.push_back(disk.inodes[i].getName());
 			type_list.push_back(disk.inodes[i].getType());
 			if (disk.inodes[i].getType() == "FILE") {
-				string str = to_string(disk.inodes[i].getSize());
-				size_list.push_back(str);
+				string str = to_string(disk.inodes[i].getSize() / 1024);
+				size_list.push_back(str + "KB");
 			}
 			else if (disk.inodes[i].getType() == "DIR") {
 				size_list.push_back("-");
@@ -936,15 +936,39 @@ string FileManager::readFileHelp(const int inode_id)
 	
 void FileManager::displayUsage()
 {
-	int count = 0;
-	for (int i = 0; i < NUM_DATA_BLOCKS;i++)
+	int used_count = 0;
+	int unused_count = 0;
+	int bar_cnt = 0;
+	for (int i = 0; i < NUM_DATA_BLOCKS; i++)
 	{
-		if (disk.getDataBlockBitmap(i) == 1) count++;
+		if (disk.getDataBlockBitmap(i) == 1)
+		{
+			used_count++;
+		}
 	}
+	unused_count = NUM_DATA_BLOCKS - used_count;
 
-	double usage = (double)(count+OFFSET_DATA) / (double)NUM_BLOCKS;
+	double usage = (double)(used_count + OFFSET_DATA) / (double)NUM_BLOCKS;
+	bar_cnt = 20 * usage;
+	
 	cout << endl;
-	cout << "usage is: "<<usage * 100 << "%" << endl;
+	cout << "Disk Usage: ";
+	cout << "[";
+	for (int i = 0; i < 20; ++i)
+	{
+		if (i < bar_cnt)
+		{
+			cout << "=";
+		}
+		else 
+		{
+			cout << " ";
+		}
+		
+	}
+	cout << "]" << usage * 100 << "%" << endl;
+	cout << left << "Used Blocks: " << setw(6) << used_count 
+		<< "Unused blocks: " << setw(6) << unused_count << endl;
 }
 
 void FileManager::printFileContents(int inode_id)
