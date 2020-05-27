@@ -40,7 +40,7 @@ DiskSystem::DiskSystem()
 	initINode(root_inode_id, "DIR", "root", getCurrTime().c_str(), -1, -1);
 	
 	/* 尝试从文件中恢复备份 */
-	systemReload();
+	// systemReload();
 
 	/* 欢迎界面 */
 	welcomeMessage();
@@ -170,11 +170,11 @@ void DiskSystem::initINode(const int inode_id, string type, const char* name, co
 void DiskSystem::welcomeMessage()
 {
 	cout << "*****************************************************************************" << endl;
-	// cout << "*                       Very Simple File System                             *" << endl;
-	cout << "*                   Highly Difficult File System                            *" << endl;
-	cout << "*                Developer: Yuexin Li 201764621160                          *" << endl;
-	cout << "*                Developer: Jing Deng 201730700165                          *" << endl;
-	cout << "*                Developer: Liyao Li  201730613274                          *" << endl;
+	cout << "*                          Very Simple File System                          *" << endl;
+	cout << "*                     Developer: Yuexin Li 201764621160                     *" << endl;
+	cout << "*                     Developer: Jing Deng 201730700165                     *" << endl;
+	cout << "*                     Developer: Liyao Li  201730613274                     *" << endl;
+	cout << "*                    Copyright 2020, All Rights Reserved                    *" << endl;
 	cout << "*****************************************************************************" << endl;
 	cout << "*               1. Create a file: createFile <fileName> <fileSize>          *" << endl;
 	cout << "*               2. Delete a file: deleteFile <fileName>                     *" << endl;

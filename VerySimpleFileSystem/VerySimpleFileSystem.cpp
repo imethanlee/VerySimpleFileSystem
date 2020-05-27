@@ -24,7 +24,7 @@ int main() {
     //when the str equals with the string "exit",break the cycling
     while (running) {
         //shell prompt
-        cout << "[root@HDFS] " << currentDir << " $ ";
+        cout << "[root@VSFS] " << currentDir << " $ ";
         getline(cin, input);  //enter the command
         istringstream input_stream(input);
         string item;
