@@ -40,7 +40,7 @@ DiskSystem::DiskSystem()
 	initINode(root_inode_id, "DIR", "root", getCurrTime().c_str(), -1, -1);
 	
 	/* 尝试从文件中恢复备份 */
-	// systemReload();
+	systemReload();
 
 	/* 欢迎界面 */
 	welcomeMessage();
@@ -65,8 +65,8 @@ void DiskSystem::systemReload()
 	errno_t err = fopen_s(&fp, "backup.dat", "r");
 	if (err == 0) {
 		fread(system_start_addr, sizeof(char), SYSTEM_SIZE, fp);
+		fclose(fp);
 	}
-	fclose(fp);
 }
 
 char* DiskSystem::getSystemStartAddr()

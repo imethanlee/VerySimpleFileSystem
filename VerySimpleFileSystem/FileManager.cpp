@@ -716,7 +716,8 @@ void FileManager::displayUsage()
 		}
 		
 	}
-	cout << "] " << usage * 100 << " %  " << endl;
+	cout << setprecision(3);
+	cout << "] " << usage * 100 << " %  " << usage * 16 << "MB / " << "16 MB" << endl;
 	cout << left << "Used blocks: " << setw(6) << used_count 
 		<< "Unused blocks: " << setw(6) << unused_count << endl;
 }
