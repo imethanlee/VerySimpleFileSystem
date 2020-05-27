@@ -54,12 +54,12 @@ int main() {
             cout << endl;
         }
         else if (str[0] == "dir") {
-            fm.listAll2();
+            fm.listAll();
         }
         else if (str[0] == "changeDir") {
 	        if (checkCommandLength(str, 2))
 	        {
-				fm.changeDirectory2(str[1].data());
+				fm.changeDirectory(str[1].data());
                 stack<string> currentPath = fm.getCurrentPath();
                 string curDir;
                 if (currentPath.empty())
@@ -82,36 +82,36 @@ int main() {
             {
                 if (atoi(str[2].data()) <= 351)
                 {
-                    fm.createFile2(str[1].data(), atoi(str[2].data()));
+                    fm.createFile(str[1].data(), atoi(str[2].data()));
                 }
                 else
                 {
-                    cerr << "File size too large" << endl;
+                    cout << "createFile: " << str[2] << ": File size too large" << endl;
                 } 
             }
         }
         else if (str[0] == "deleteFile") {
             if (checkCommandLength(str, 2))
-                fm.deleteFile2(str[1].data());
+                fm.deleteFile(str[1].data());
         }
         else if (str[0] == "createDir") {
             if (checkCommandLength(str, 2))
-                fm.createDirectory2(str[1].data());
+                fm.createDirectory(str[1].data());
         }
         else if (str[0] == "deleteDir") {
             if (checkCommandLength(str, 2))
-                fm.deleteDirectory2(str[1].data());
+                fm.deleteDirectory(str[1].data());
         }
         else if (str[0] == "cp") {
             if (checkCommandLength(str, 3))
-                fm.copyFile2(str[1].data(), str[2].data());
+                fm.copyFile(str[1].data(), str[2].data());
         }
         else if (str[0] == "sum") {
             fm.displayUsage();
         }
         else if (str[0] == "cat") {
             if (checkCommandLength(str, 2))
-                fm.printFileContents2(str[1].data());
+                fm.printFileContents(str[1].data());
         }
         else if (str[0] == "help") {
             fm.getDisk()->welcomeMessage();
