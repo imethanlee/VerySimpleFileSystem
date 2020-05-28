@@ -15,6 +15,7 @@ int FileManager::getNode(const char* path, const char* type)
 {
 	// 返回值>= NUM_INODES时, No such file or directory
 	// 返回值<0时, (-返回值-1)为上一个找得到的文件夹inode_id
+	// 0<=返回值<NUM_INODES时, 返回值为找到的目标inode_id 
 	int current_inode_id; // 开始向下寻找的inode
 	if (!strncmp(path, "/", 1)) // 输入绝对地址 /dir1
 		current_inode_id = 0;
@@ -321,6 +322,7 @@ void FileManager::createDirectory(const char* dir_name, bool nested)
 	}
 	else
 	{
+		// 通过搜索路径的反馈结果确认能找得到最后一级目录
 		const int parent_inode_id = -result - 1;
 		int dir_inode_id = disk.getFreeINodeID();
 		disk.initINode(dir_inode_id, "DIR", lpath[length - 1], getCurrTime().c_str(), -1, parent_inode_id);
@@ -520,7 +522,7 @@ void FileManager::listAll()
 			type_list.push_back(disk.inodes[i].getType());
 			if (disk.inodes[i].getType() == "FILE") {
 				string str = to_string(disk.inodes[i].getSize() / 1024);
-				size_list.push_back(str + "KB");
+				size_list.push_back(str + " KB");
 			}
 			else if (disk.inodes[i].getType() == "DIR") {
 				size_list.push_back("-");
@@ -717,7 +719,7 @@ void FileManager::displayUsage()
 		
 	}
 	cout << setprecision(3);
-	cout << "] " << usage * 100 << " %  " << usage * 16 << "MB / " << "16 MB" << endl;
+	cout << "] " << usage * 100 << " %  " << usage * 16 << " MB / " << "16 MB" << endl;
 	cout << left << "Used blocks: " << setw(6) << used_count 
 		<< "Unused blocks: " << setw(6) << unused_count << endl;
 }

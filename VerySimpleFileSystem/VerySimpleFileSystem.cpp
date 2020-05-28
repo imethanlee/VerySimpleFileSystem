@@ -86,7 +86,7 @@ int main() {
                 }
                 else
                 {
-                    cout << "createFile: " << str[2] << ": File size too large" << endl;
+                    cout << "createFile: " << str[2] << ": File size too large ( > 351 KB)" << endl;
                 } 
             }
         }
