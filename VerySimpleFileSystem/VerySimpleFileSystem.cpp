@@ -14,6 +14,7 @@ bool checkCommandLength(vector<string>& input,const int expected_length)
 }
 
 int main() {
+	srand(time(0));
 	FileManager fm;
 
 	vector<string> str;
